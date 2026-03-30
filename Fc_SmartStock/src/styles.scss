@@ -1,0 +1,43 @@
+$primary: #ff5733;
+
+@import "bootstrap/scss/bootstrap";
+
+/* Bootstrap Icons */
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Font Awesome */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: #f7f9fb;
+  color: #0f2b2e;
+}
+
+.mr-auto {
+  margin: auto;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  pointer-events: auto; 
+  opacity: 0.5;
+}
+
+.clickable-icon {
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: color 0.2s ease;
+}
+
+.clickable-icon:hover {
+  color: #0d6efd; /* Bootstrap primary blue */
+}
+
+.ngx-spinner-overlay {
+  z-index: 999999 !important;
+}

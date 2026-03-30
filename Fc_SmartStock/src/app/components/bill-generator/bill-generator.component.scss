@@ -1,0 +1,202 @@
+.card {
+  // width: 420px;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(10, 28, 30, 0.06);
+  // background: white;
+  overflow: hidden;
+}
+
+.card-header {
+  background: #0f6871;
+  /* teal header */
+  color: white;
+  font-weight: 800;
+  text-align: center;
+  // padding: 28px 16px;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
+
+.card-body {
+  padding: 20px 22px 28px 22px;
+}
+
+.top-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f2b2e;
+}
+
+.radio input[type="radio"] {
+  width: 18px;
+  height: 18px;
+}
+
+.select-wrap select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 2px solid #dfeaf0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f2b2e;
+  margin-bottom: 14px;
+  background: white;
+}
+
+.table {
+  border-top: 1px solid #e9f1f2;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 240px 160px 120px;
+  gap: 0;
+  padding: 18px 8px;
+  align-items: center;
+  color: #627c7f;
+  font-weight: 700;
+  border-bottom: 1px solid #eef6f7;
+}
+
+/* actions */
+.actions {
+  display: flex;
+  justify-content: center;
+}
+
+.generate {
+  width: 100%;
+  background: #0f6871;
+  color: white;
+  padding: 14px 18px;
+  border-radius: 8px;
+  border: none;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05) inset;
+}
+
+.recent {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* recently generated */
+.recent h3 {
+  margin: 8px 0 12px;
+  font-size: 20px;
+  color: #0f2b2e;
+}
+
+.bills {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bill-card {
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-weight: 700;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02) inset;
+}
+
+.bill-card.c1 {
+  background: #e6f6ff;
+  color: #0f2b2e;
+}
+
+.bill-card.c2 {
+  background: #e8fbf4;
+  color: #0f2b2e;
+}
+
+.bill-card.c3 {
+  background: #fff3e6;
+  color: #0f2b2e;
+}
+
+.bill-card.c4 {
+  background: #fde9e9;
+  color: #0f2b2e;
+}
+
+.bill-title {
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.bill-sub {
+  font-size: .75rem;
+  color: #3e5b5c;
+  margin-top: 6px;
+}
+
+/* responsiveness */
+@media (max-width: 480px) {
+  .card {
+    width: 96%;
+  }
+
+  .table-header {
+    grid-template-columns: 1fr 140px 100px 90px;
+  }
+}
+
+
+.no-records-found {
+  text-align: center;
+  margin: 3rem;
+}
+
+.fs-20 {
+  font-size: 20px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+.totalPayable {
+  padding: 18px;
+}
+
+.paid-amount{
+  font-size: .75rem;
+  height: fit-content;
+}
+
+.balance-box,
+.summary-box,
+.payment-box {
+  background: #f3fbfb;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.summary-box div {
+  margin-bottom: 6px;
+}

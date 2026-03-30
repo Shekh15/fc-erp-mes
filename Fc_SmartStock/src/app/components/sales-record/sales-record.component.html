@@ -1,0 +1,42 @@
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="card shadow-sm p-4" style="width: 400px; border-radius: 16px;">
+            <!-- Date -->
+            <div class="mb-3">
+                <label for="date" class="form-label fw-semibold">Date</label>
+                <input type="date" class="form-control" id="date" placeholder="Select Date" />
+            </div>
+
+            <!-- Product Name -->
+            <div class="mb-3">
+                <label for="product_name" class="form-label fw-semibold">Product Name</label>
+                <select id="product_name" class="form-select" [(ngModel)]="selectedProductId" (change)="onSelectOption()">
+                    <option [ngValue]="null" disabled>Product Name</option>
+                    <option *ngFor="let p of products" [value]="p.id">{{ p.name }}</option>
+                </select>
+            </div>
+
+            <!-- Produced Packets -->
+            <div class="mb-3">
+                <label for="producedPackets" class="form-label fw-semibold">Produced Packets</label>
+                <input type="number" class="form-control" id="producedPackets" placeholder="0" />
+            </div>
+
+            <!-- Sales Packets -->
+            <div class="mb-3">
+                <label for="salesPackets" class="form-label fw-semibold">Sales Packets</label>
+                <input type="number" class="form-control" id="salesPackets" placeholder="0" />
+            </div>
+
+            <!-- Current Stock -->
+            <div class="mb-4">
+                <label for="currentStock" class="form-label fw-semibold">Current Stock</label>
+                <input type="number" class="form-control bg-light" id="currentStock" placeholder="0" readonly />
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill">Update Stock</button>
+                <button type="reset" class="btn btn-outline-primary flex-fill">Reset</button>
+            </div>
+    </div>
+</div>

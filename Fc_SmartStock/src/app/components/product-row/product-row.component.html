@@ -1,0 +1,23 @@
+<div class="row" [formGroup]="group">
+
+    <div class="cell product-name">
+        {{ group.get('productName')?.value }}
+    </div>
+
+    <div class="cell qty-cell">
+        <button class="step" type="button" (click)="decQty()">−</button>
+        <div class="value">{{ qty }}</div>
+        <button class="step" type="button" (click)="incQty()">+</button>
+    </div>
+
+    <div class="cell price-cell">
+        <button class="step" type="button" (click)="decPrice()">−</button>
+        <div class="value">{{ unitPrice }}</div>
+        <button class="step" type="button" (click)="incPrice()">+</button>
+    </div>
+
+    <div class="cell total-cell">
+        ₹ {{ total }}
+    </div>
+
+</div>

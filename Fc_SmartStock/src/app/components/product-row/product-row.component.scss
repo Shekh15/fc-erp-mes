@@ -1,0 +1,62 @@
+    :host {
+        display: block;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 240px 160px 120px;
+        align-items: center;
+        padding: 18px 12px;
+        border-bottom: 1px solid #eff5f6;
+    }
+
+    .cell {
+        font-weight: 600;
+        color: #0f2b2e;
+    }
+
+    .product-name {
+        padding-left: 6px;
+    }
+
+    .qty-cell,
+    .price-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .step {
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+        border: 1px solid #cbd7d9;
+        background: #f7fafb;
+        font-size: 20px;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    .value {
+        min-width: 48px;
+        text-align: center;
+        font-weight: 600;
+        background: white;
+        border-radius: 4px;
+        padding: 8px 6px;
+        border: 1px solid #eaefef;
+    }
+
+    .total-cell {
+        text-align: center;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 520px) {
+        .row {
+            grid-template-columns: 1fr 160px 120px 120px;
+            gap: 6px;
+        }
+    }
