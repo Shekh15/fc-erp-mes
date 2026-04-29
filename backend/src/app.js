@@ -13,6 +13,21 @@ const paymentRoutes = require('./routes/paymentRoutes');
 
 // Middleware
 app.use(cors());
+// app.use(cors(
+//   {
+//     origin: "*", Allow all origins (for development; restrict in production)
+//     origin: [
+//       "http://localhost:4200",
+//       "http://localhost:4201", for fallback
+//       "http://localhost:3000", for serve while on development
+//       //Add production frontend URL here
+//       "https://your-frontend-domain.com"
+//     ], Allowed origins
+
+//     methods: "GET,POST,PUT,DELETE",  Allowed HTTP methods
+//     allowedHeaders: "Content-Type,Authorization" Allowed headers 
+//   }
+// ));
 app.use(express.json());
 
 // ✅ Root health check

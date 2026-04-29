@@ -10,11 +10,11 @@ import {
 import {
   BrowserModule,
   DomRendererFactory2
-} from "./chunk-MOFAXLZF.js";
-import "./chunk-PSMLASFK.js";
+} from "./chunk-KSPHWWIB.js";
+import "./chunk-RXZLX75I.js";
 import {
   DOCUMENT
-} from "./chunk-K5F7PWX6.js";
+} from "./chunk-YITWH4DC.js";
 import {
   ANIMATION_MODULE_TYPE,
   Inject,
