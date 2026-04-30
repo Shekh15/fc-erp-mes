@@ -126,6 +126,7 @@ export class BillGeneratorComponent implements OnInit {
     });
   }
 
+  //This method will load all products and push to form array
   loadProducts() {
     this.items.clear();
 
