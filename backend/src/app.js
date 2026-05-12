@@ -12,7 +12,6 @@ const paymentRoutes = require('./routes/paymentRoutes');
 
 
 // Middleware
-app.use(cors());
 // app.use(cors(
 //   {
 //     origin: "*", Allow all origins (for development; restrict in production)
@@ -28,6 +27,14 @@ app.use(cors());
 //     allowedHeaders: "Content-Type,Authorization" Allowed headers 
 //   }
 // ));
+
+app.use(cors(
+  {
+    origin: "*",
+    methods: "GET,POST,PUT,DELETE",  //Allowed HTTP methods
+    allowedHeaders: "Content-Type,Authorization" //Allowed headers 
+  }
+));
 app.use(express.json());
 
 // ✅ Root health check
