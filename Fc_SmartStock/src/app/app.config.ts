@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { spinnerInterceptor } from '../app/core/interceptors/spinner.interceptor';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,5 +20,5 @@ export const appConfig: ApplicationConfig = {
 };
 
 export const AppConfig = {
-  apiUrl: 'https://api.example.com/v1' // reserved for future integration
+  apiUrl: environment.apiUrl // reserved for future integration
 };

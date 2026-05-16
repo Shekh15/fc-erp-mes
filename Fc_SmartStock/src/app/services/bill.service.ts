@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AppConfig } from '../app.config';
 
 @Injectable({ providedIn: 'root' })
 export class BillService {
 
-  private billUrl = 'http://localhost:3000/api/bills';
-  private ledgerUrl = 'http://localhost:3000/api/ledger';
-  private priceListUrl = 'http://localhost:3000/api/price-lists';
+  apiUrl = AppConfig.apiUrl;
+  
+
+  private billUrl = `${this.apiUrl}/bills`;
+  private ledgerUrl = `${this.apiUrl}/ledger`;
+  private priceListUrl = `${this.apiUrl}/price-lists`;
 
   constructor(private http: HttpClient) {}
 
