@@ -3,10 +3,8 @@ FROM node:18 AS build
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
-
 COPY . .
+RUN npm install
 RUN npm run build
 
 # Runtime stage
