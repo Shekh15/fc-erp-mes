@@ -3,8 +3,10 @@ FROM node:18 AS build
 
 WORKDIR /app
 
-COPY . .
+COPY Fc_SmartStock/package*.json ./
 RUN npm install
+
+COPY Fc_SmartStock/ ./
 RUN npm run build
 
 # Runtime stage
