@@ -88,7 +88,7 @@
     </div>
     <div class="col-4">
         <div class="recent">
-            <h3>Recently Generated Bills</h3>
+            <h3>Recently Generated</h3>
             <div class="bills">
                 <div *ngFor="let b of bills; let idx = index" class="bill-card" [ngClass]="'c'+(idx % 4 + 1)">
                     <div class="bill-title">{{ b.clientName }}
