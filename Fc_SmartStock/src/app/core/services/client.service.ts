@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AppConfig } from '../../app.config';
 
 export interface Client {
   id: string;
@@ -13,11 +14,13 @@ export interface Client {
 })
 export class ClientService {
 
-  private apiUrl = 'http://localhost:3000/api/clients';
+  apiUrl = AppConfig.apiUrl;
+
+  private clientUrl = `${this.apiUrl}/clients`;
 
   constructor(private http: HttpClient) { }
 
   getClients(): Observable<Client[]> {
-    return this.http.get<Client[]>(this.apiUrl);
+    return this.http.get<Client[]>(this.clientUrl);
   }
 }
