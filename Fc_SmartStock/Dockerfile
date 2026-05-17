@@ -3,13 +3,13 @@ FROM node:20 AS build
 
 WORKDIR /app
 
-# Copy only Angular package files from monorepo root context
+# Copy Angular package files from monorepo root context
 COPY Fc_SmartStock/package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the Angular project
+# Copy Angular source
 COPY Fc_SmartStock/ ./
 
 # Build production bundle
@@ -21,7 +21,7 @@ FROM nginx:alpine
 # Remove default nginx page
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy Angular build output
-COPY --from=build /app/dist/fc-smart-stock /usr/share/nginx/html
+# IMPORTANT: copy from browser subfolder
+COPY --from=build /app/dist/fc-smart-stock/browser/ /usr/share/nginx/html/
 
 EXPOSE 80
