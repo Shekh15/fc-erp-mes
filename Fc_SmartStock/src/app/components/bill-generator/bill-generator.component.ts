@@ -45,6 +45,7 @@ export class BillGeneratorComponent implements OnInit {
   ngOnInit() {
     this.initForm();
     this.loadClients();
+    this.loadAllPriceLists();
     this.loadProducts();
     this.loadBillsFromServer();
 
@@ -326,6 +327,9 @@ export class BillGeneratorComponent implements OnInit {
   }
 
   editBill(bill: any) {
+
+    console.log("Editing bill:::", bill);
+    
     this.isEditMode = true;
     this.editingBillId = bill.original_bill_id;
 
@@ -362,10 +366,21 @@ export class BillGeneratorComponent implements OnInit {
     });
   }
 
+  loadAllPriceLists() {
+    this.billService.getAllPriceLists().subscribe({
+      next: (lists: any[]) => {
+        this.priceLists = lists;
+        console.log("All price lists:::", this.priceLists);
+      }
+    });
+  }
+
   loadClientPriceList(clientId: number) {
     this.billService.getPriceListsByClient(clientId).subscribe({
       next: (lists) => {
-        this.priceLists = lists;
+        // this.priceLists = lists;
+
+        console.log("Client specific price lists:::", lists);
 
         if (lists.length) {
           this.billForm.patchValue({ priceListId: lists[0].id });

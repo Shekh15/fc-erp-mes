@@ -44,7 +44,7 @@
 
 .select-wrap select {
   width: 100%;
-  padding: 14px 16px;
+  padding: 6px 6px;
   border-radius: 8px;
   border: 2px solid #dfeaf0;
   font-size: 20px;
@@ -52,6 +52,12 @@
   color: #0f2b2e;
   margin-bottom: 14px;
   background: white;
+}
+
+.items-container {
+   max-height: 50vh;       /* fixed height */
+  overflow-y: auto;    /* vertical scroll */
+  overflow-x: hidden; 
 }
 
 .table {
@@ -79,7 +85,7 @@
   width: 100%;
   background: #0f6871;
   color: white;
-  padding: 14px 18px;
+  padding: 6px 6px;
   border-radius: 8px;
   border: none;
   font-size: 20px;
@@ -199,4 +205,15 @@
 
 .summary-box div {
   margin-bottom: 6px;
+}
+
+button:not(:disabled),
+.clickable-icon {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+button:not(:disabled):hover,
+.clickable-icon:hover {
+  opacity: 0.85;
 }

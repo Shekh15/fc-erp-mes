@@ -4,6 +4,7 @@ import { BillGeneratorComponent } from './components/bill-generator/bill-generat
 import { SalesRecordComponent } from './components/sales-record/sales-record.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
   import { NgxSpinnerService } from 'ngx-spinner';
+import { environment } from '../environments/environment.development';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,13 @@ export class AppComponent {
   title = 'Fc_SmartStock';
 
 
-constructor(private spinner: NgxSpinnerService) {}
+constructor(private spinner: NgxSpinnerService) {
+
+  console.log("Environment config used:",environment);
+}
+
+
+  
 
 
   testSpinner() {

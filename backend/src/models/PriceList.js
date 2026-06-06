@@ -6,7 +6,7 @@ exports.getAllActive = async () => {
     `SELECT id, name, description
      FROM Fc_price_lists
      WHERE is_active = 1
-     ORDER BY priority DESC`
+     ORDER BY createdAt DESC`
   );
   return rows;
 };
@@ -32,7 +32,7 @@ exports.getItems = async (priceListId) => {
         pli.product_id,
         p.name AS productName,
         pli.price
-     FROM Fc_price_list_items pli
+     FROM Fc_price_list_products pli
      JOIN Fc_products p ON pli.product_id = p.id
      WHERE pli.price_list_id = ?
        AND pli.is_active = 1`,

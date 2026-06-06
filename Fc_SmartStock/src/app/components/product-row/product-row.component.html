@@ -1,23 +1,38 @@
 <div class="row" [formGroup]="group">
 
+    <!-- Product Name -->
     <div class="cell product-name">
         {{ group.get('productName')?.value }}
     </div>
 
+    <!-- Quantity (Kept simple, changes only by 1) -->
     <div class="cell qty-cell">
         <button class="step" type="button" (click)="decQty()">−</button>
         <div class="value">{{ qty }}</div>
         <button class="step" type="button" (click)="incQty()">+</button>
     </div>
 
+    <!-- Unit Price (With Dynamic Decimal Steps) -->
     <div class="cell price-cell">
-        <button class="step" type="button" (click)="decPrice()">−</button>
-        <div class="value">{{ unitPrice }}</div>
-        <button class="step" type="button" (click)="incPrice()">+</button>
+        <!-- Pass the dynamic step value from the directive reference -->
+        <button class="step" step="0.25" type="button" (click)="decPrice(priceInputRef.currentStep)">−</button>
+        
+        <input 
+            class="value" 
+            formControlName="unitPrice"
+            appTwoDecimal
+            #priceInputRef="appTwoDecimal"
+            placeholder="0.00"
+        />
+        
+        <!-- Pass the dynamic step value from the directive reference -->
+        <button class="step" step="0.25" type="button" (click)="incPrice(priceInputRef.currentStep)">+</button>
     </div>
 
+    <!-- Total Display -->
     <div class="cell total-cell">
-        ₹ {{ total }}
+        <!-- Renders standard Indian localization format with 2 fixed decimals -->
+        ₹ {{ total | number:'1.2-2' }}
     </div>
 
 </div>

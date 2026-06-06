@@ -5,9 +5,7 @@ import { AppConfig } from '../app.config';
 
 @Injectable({ providedIn: 'root' })
 export class BillService {
-
   apiUrl = AppConfig.apiUrl;
-  
 
   private billUrl = `${this.apiUrl}/bills`;
   private ledgerUrl = `${this.apiUrl}/ledger`;
@@ -33,7 +31,7 @@ export class BillService {
 
   getClientLedgerBalance(clientId: number): Observable<{ balance: number }> {
     return this.http.get<{ balance: number }>(
-      `${this.ledgerUrl}/client/${clientId}/balance`
+      `${this.ledgerUrl}/client/${clientId}/balance`,
     );
   }
 
@@ -43,15 +41,15 @@ export class BillService {
 
   // ================= PRICE LIST =================
 
+  getAllPriceLists(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.priceListUrl}`);
+  }
+
   getPriceListsByClient(clientId: number): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.priceListUrl}/client/${clientId}`
-    );
+    return this.http.get<any[]>(`${this.priceListUrl}/client/${clientId}`);
   }
 
   getPriceListItems(priceListId: number): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.priceListUrl}/${priceListId}/items`
-    );
+    return this.http.get<any[]>(`${this.priceListUrl}/${priceListId}/products`);
   }
 }

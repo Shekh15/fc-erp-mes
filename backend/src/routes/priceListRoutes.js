@@ -4,6 +4,6 @@ const priceListController = require("../controllers/priceListController");
 
 router.get("/", priceListController.getAllActive);
 router.get("/client/:clientId", priceListController.getByClient);
-router.get("/:priceListId/items", priceListController.getItems);
+router.get("/:priceListId/products", priceListController.getItems);
 
 module.exports = router;

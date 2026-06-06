@@ -41,15 +41,15 @@ export class SalesRecordComponent implements OnInit {
         console.log("products:::", data);
         this.products = data;
 
-        for (let i = 0; i < this.products.length; i++) {
-          this.products.push({
-            productId: this.products[i].id,
-            productName: this.products[i].name,
-            qty: 0,
-            unitPrice: this.products[i].price,
-            total: +(0 * this.products[i].price)
-          });
-        }
+        // for (let i = 0; i < this.products.length; i++) {
+        //   this.products.push({
+        //     productId: this.products[i].id,
+        //     productName: this.products[i].name,
+        //     qty: 0,
+        //     unitPrice: this.products[i].price,
+        //     total: +(0 * this.products[i].price)
+        //   });
+        // }
       },
       error: (err: unknown) => {
         console.error('Error loading products:', err);

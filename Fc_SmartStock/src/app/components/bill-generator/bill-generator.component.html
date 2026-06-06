@@ -31,16 +31,16 @@
                     <div class="select-wrap" *ngIf="priceLists.length">
                         <select formControlName="priceListId">
 
-                            <option value="">Select Price List</option>
+                            <option [ngValue]="null">Select Price List</option>
 
-                            <option *ngFor="let p of priceLists" [value]="p.id">
+                            <option *ngFor="let p of priceLists" [ngValue]="p.id">
                                 {{ p.name }}
                             </option>
 
                         </select>
                     </div>
 
-                    <div formArrayName="items">
+                    <div class="items-container" formArrayName="items">
                         <div *ngFor="let group of itemControls; let i = index">
                             <app-product-row [group]="group"></app-product-row>
                         </div>
@@ -57,7 +57,7 @@
                         <h1 class="text-center fw-600 fs-20">Grand Total: ₹ {{ grandTotal | number:'1.2-2' }}</h1>
                     </div>
 
-                    <div class="payment-box text-center ">
+                    <div class="payment-box text-center mt-2">
                         <label class="me-2">Paid Amount</label>
                         <input type="text" formControlName="paidAmount" />
                     </div>
