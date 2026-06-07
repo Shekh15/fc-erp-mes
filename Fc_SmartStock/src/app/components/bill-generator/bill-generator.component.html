@@ -1,13 +1,14 @@
 <div class="row">
     <div class="col-lg-8 col-md-12 col-sm-12">
-        <div class="card">
-            <div class="card-header">Smart Billing</div>
+        <div class="container-billscreen m-2">
+            <div class="card">
+                <div class="card-header">Smart Billing</div>
 
-            <div class="card-body">
+                <div class="card-body">
 
-                <form [formGroup]="billForm">
+                    <form [formGroup]="billForm">
 
-                    <!-- <div class="top-row">
+                        <!-- <div class="top-row">
                         <label class="radio">
                             <input type="radio" formControlName="inhouse" [value]="true">
                             <span>Inhouse</span>
@@ -19,70 +20,71 @@
                         </label>
                     </div> -->
 
-                    <div class="select-wrap">
-                        <select formControlName="clientId">
-                            <option [ngValue]="null" disabled>Option</option>
-                            <option *ngFor="let c of clients" [value]="c.id">
-                                {{ c.name }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="select-wrap" *ngIf="priceLists.length">
-                        <select formControlName="priceListId">
-
-                            <option [ngValue]="null">Select Price List</option>
-
-                            <option *ngFor="let p of priceLists" [ngValue]="p.id">
-                                {{ p.name }}
-                            </option>
-
-                        </select>
-                    </div>
-
-                    <div class="items-container" formArrayName="items">
-                        <div *ngFor="let group of itemControls; let i = index">
-                            <app-product-row [group]="group"></app-product-row>
+                        <div class="select-wrap">
+                            <select formControlName="clientId">
+                                <option [ngValue]="null" disabled>Option</option>
+                                <option *ngFor="let c of clients" [value]="c.id">
+                                    {{ c.name }}
+                                </option>
+                            </select>
                         </div>
-                    </div>
 
-                    <div class="balance-box">
-                        Current Bill: <span class="float-end me-4">₹ {{ totalBillAmount | number:'1.2-2' }}</span>
-                    </div>
-                    <div class="balance-box" *ngIf="clientDueAmount !== null">
-                        Previous Due: <span class="float-end me-4">(₹) {{ clientDueAmount | number:'1.2-2' }}</span>
-                    </div>
+                        <div class="select-wrap" *ngIf="priceLists.length">
+                            <select formControlName="priceListId">
 
-                    <div>
-                        <h1 class="text-center fw-600 fs-20">Grand Total: ₹ {{ grandTotal | number:'1.2-2' }}</h1>
-                    </div>
+                                <option [ngValue]="null">Select Price List</option>
 
-                    <div class="payment-box text-center mt-2">
-                        <label class="me-2">Paid Amount</label>
-                        <input type="text" formControlName="paidAmount" />
-                    </div>
+                                <option *ngFor="let p of priceLists" [ngValue]="p.id">
+                                    {{ p.name }}
+                                </option>
 
-                    <div class="summary-box text-center">
-                        <!-- <div>Current Bill: ₹ {{ totalBillAmount | number:'1.2-2' }}</div> -->
-                        <!-- <div>Previous Due: ₹ {{ clientDueAmount | number:'1.2-2' }}</div> -->
-                        <!-- <div><strong>Grand Total: ₹ {{ grandTotal | number:'1.2-2' }}</strong></div> -->
-                        <div>Remaining Balance: ₹ {{ remainingBalance | number:'1.2-2' }}</div>
-                    </div>
+                            </select>
+                        </div>
 
-                    <div class="actions my-2">
-                        <button class="generate" [disabled]="billForm.invalid" (click)="saveOrUpdateBill()">
-                            {{ isEditMode ? 'Update Bill' : 'Generate' }}
-                        </button>
-                    </div>
+                        <div class="items-container" formArrayName="items">
+                            <div *ngFor="let group of itemControls; let i = index">
+                                <app-product-row [group]="group"></app-product-row>
+                            </div>
+                        </div>
 
-                    <div class="actions my-2">
-                        <button class="generate" [disabled]="billForm.invalid" (click)="resetForm()">
-                            {{ 'Cancel' }}
-                        </button>
-                    </div>
+                        <div class="balance-box">
+                            Current Bill: <span class="float-end me-4">₹ {{ totalBillAmount | number:'1.2-2' }}</span>
+                        </div>
+                        <div class="balance-box" *ngIf="clientDueAmount !== null">
+                            Previous Due: <span class="float-end me-4">(₹) {{ clientDueAmount | number:'1.2-2' }}</span>
+                        </div>
 
-                </form>
+                        <div>
+                            <h1 class="text-center fw-600 fs-20">Grand Total: ₹ {{ grandTotal | number:'1.2-2' }}</h1>
+                        </div>
 
+                        <div class="payment-box text-center mt-2">
+                            <label class="me-2">Paid Amount</label>
+                            <input type="text" formControlName="paidAmount" />
+                        </div>
+
+                        <div class="summary-box text-center">
+                            <!-- <div>Current Bill: ₹ {{ totalBillAmount | number:'1.2-2' }}</div> -->
+                            <!-- <div>Previous Due: ₹ {{ clientDueAmount | number:'1.2-2' }}</div> -->
+                            <!-- <div><strong>Grand Total: ₹ {{ grandTotal | number:'1.2-2' }}</strong></div> -->
+                            <div>Remaining Balance: ₹ {{ remainingBalance | number:'1.2-2' }}</div>
+                        </div>
+
+                        <div class="actions my-2">
+                            <button class="generate" [disabled]="billForm.invalid" (click)="saveOrUpdateBill()">
+                                {{ isEditMode ? 'Update Bill' : 'Generate Bill' }}
+                            </button>
+                        </div>
+
+                        <div class="actions my-2">
+                            <button class="generate" [disabled]="billForm.invalid" (click)="resetForm()">
+                                {{ 'Cancel' }}
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
             </div>
         </div>
     </div>

@@ -12,11 +12,12 @@ import {
   createObject,
   createOperatorSubscriber,
   innerFrom,
+  isFunction,
   map,
   mapOneOrManyArgs,
   noop,
   popResultSelector
-} from "./chunk-T5VZW45T.js";
+} from "./chunk-EWHU56JM.js";
 import {
   __async,
   __spreadProps,
@@ -920,6 +921,18 @@ var VirtualAction = function(_super) {
   };
   return VirtualAction2;
 }(AsyncAction);
+
+// node_modules/rxjs/dist/esm5/internal/util/isObservable.js
+function isObservable(obj) {
+  return !!obj && (obj instanceof Observable || isFunction(obj.lift) && isFunction(obj.subscribe));
+}
+
+// node_modules/rxjs/dist/esm5/internal/observable/defer.js
+function defer(observableFactory) {
+  return new Observable(function(subscriber) {
+    innerFrom(observableFactory()).subscribe(subscriber);
+  });
+}
 
 // node_modules/rxjs/dist/esm5/internal/observable/forkJoin.js
 function forkJoin() {
@@ -26980,6 +26993,8 @@ export {
   SIGNAL,
   setAlternateWeakRefImpl,
   setCurrentInjector,
+  isObservable,
+  defer,
   forkJoin,
   XSS_SECURITY_URL,
   RuntimeError,
@@ -27507,4 +27522,4 @@ export {
    * found in the LICENSE file at https://angular.dev/license
    *)
 */
-//# sourceMappingURL=chunk-4RHO7N2C.js.map
+//# sourceMappingURL=chunk-G2GYG57L.js.map

@@ -202,6 +202,7 @@ export class BillGeneratorComponent implements OnInit {
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
+        console.log("Loadedd bills from serve:::",this.bills);
       },
       error: (err) => console.error('Error loading bills:', err),
     });

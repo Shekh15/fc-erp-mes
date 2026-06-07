@@ -1,11 +1,23 @@
-    <!-- <div class="container-center m-2">
-      <app-bill-generator></app-bill-generator>
-    </div> -->
 
-<div class="container-center m-2">
+<!-------------------------Header--------------------- -->
+@if (isAuthenticated) {
+  <app-header class="header h-10"></app-header>
+}
+<!-------------------------/Header----------------------->
+
+<div class="app-container h-70">
+    
       <!-- <app-sales-record></app-sales-record> -->
-       <app-bill-generator></app-bill-generator>
+       <!-- <app-bill-generator></app-bill-generator> -->
+       <router-outlet></router-outlet>
+
 </div>
+
+@if (isAuthenticated) {
+  <app-footer class="footer h-20"></app-footer>
+}
+
+
 
 <ngx-spinner
   bdColor="rgba(0,0,0,0.4)"

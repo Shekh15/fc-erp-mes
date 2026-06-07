@@ -1,0 +1,20 @@
+.navbar {
+  background-color: #0f6871;
+}
+.navbar .navbar-nav .nav-link {background: #0f6871;
+  font-weight: 800;
+  color: #fff;
+  font-size: 1.2rem;
+}
+.navbar .navbar-nav .nav-link:hover {
+  color: #fed136;
+}
+.navbar .navbar-nav .active > .nav-link {
+  background-color: black;
+  border-radius: 8px;;
+}
+
+.navbar .navbar-nav .nav-link.active-nav {
+  background-color: black !important; /* Added !important to guarantee overwrite */
+  border-radius: 8px;
+}
