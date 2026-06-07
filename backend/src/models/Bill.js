@@ -19,6 +19,7 @@ exports.create = async (data, userId) => {
   try {
     const {
       clientId,
+      priceListId,
       clientName,
       inhouse,
       items,
@@ -32,11 +33,12 @@ exports.create = async (data, userId) => {
     const [result] = await conn.query(
       `
       INSERT INTO Fc_bills
-      (clientId, clientName, inhouse, items, total, paidAmount, previousAmount, payment_status, created_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'UNPAID', ?)
+      (clientId, priceListId, clientName, inhouse, items, total, paidAmount, previousAmount, payment_status, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNPAID', ?)
     `,
       [
         clientId,
+        priceListId,
         clientName,
         inhouse,
         JSON.stringify(items),
@@ -140,7 +142,7 @@ exports.update = async (originalBillId, data, userId) => {
   try {
     console.log("On update body payload:::", data);
 
-    const { clientName, inhouse, items, total, paidAmount, previousAmount } =
+    const { clientName, priceListId, inhouse, items, total, paidAmount, previousAmount } =
       data;
 
     console.log("Original Bill Id:::", originalBillId);
@@ -221,13 +223,14 @@ exports.update = async (originalBillId, data, userId) => {
     const [newResult] = await conn.query(
       `
       INSERT INTO Fc_bills
-      (clientId, clientName, inhouse, items, total, paidAmount, previousAmount,
+      (clientId, priceListId, clientName, inhouse, items, total, paidAmount, previousAmount,
        payment_status, created_by,
        original_bill_id, version_number)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'UNPAID', ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNPAID', ?, ?, ?)
     `,
       [
         oldBill.clientId,
+        priceListId,
         clientName,
         inhouse,
         JSON.stringify(items),

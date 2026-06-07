@@ -31,7 +31,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 app.use(cors(
   {
     origin: "*",
-    methods: "GET,POST,PUT,DELETE",  //Allowed HTTP methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],  //Allowed HTTP methods
     allowedHeaders: "Content-Type,Authorization" //Allowed headers 
   }
 ));
