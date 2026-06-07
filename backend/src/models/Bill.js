@@ -28,7 +28,7 @@ exports.create = async (data, userId) => {
       previousAmount,
     } = data;
 
-    console.log("Bill Created:::", data);
+    // console.log("Bill Created:::", data);
 
     const [result] = await conn.query(
       `
@@ -53,7 +53,12 @@ exports.create = async (data, userId) => {
 
     // Insert Bill Items
     for (const item of items) {
-      console.log("Inserting Bill Item:::", item);
+      if (!item.qty || Number(item.qty) <= 0) {
+        continue;
+      }
+
+      // console.log("Inserting Bill Item:::", item);
+
       await conn.query(
         `
     INSERT INTO Fc_bill_items
@@ -69,7 +74,7 @@ exports.create = async (data, userId) => {
       created_by
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `,
+    `,
         [
           billId,
           item.productId,
@@ -142,8 +147,15 @@ exports.update = async (originalBillId, data, userId) => {
   try {
     console.log("On update body payload:::", data);
 
-    const { clientName, priceListId, inhouse, items, total, paidAmount, previousAmount } =
-      data;
+    const {
+      clientName,
+      priceListId,
+      inhouse,
+      items,
+      total,
+      paidAmount,
+      previousAmount,
+    } = data;
 
     console.log("Original Bill Id:::", originalBillId);
     // Get active version
@@ -245,24 +257,33 @@ exports.update = async (originalBillId, data, userId) => {
 
     const newBillId = newResult.insertId;
 
+    console.log("Items:", JSON.stringify(items, null, 2));
+
     // Insert New Version Bill Items
     for (const item of items) {
+      if (!item.qty || Number(item.qty) <= 0) {
+        continue;
+      }
+
+      console.log("Current item:", item);
+      console.log("item.qty =", item.qty);
+
+      // console.log("Inserting Bill Item:::", item);
+
       await conn.query(
-        `
-    INSERT INTO Fc_bill_items
-    (
-      bill_id,
-      product_id,
-      product_name,
-      client_id,
-      quantity,
-      unit_price,
-      product_price_snapshot,
-      total_price,
-      created_by
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `,
+        `INSERT INTO Fc_bill_items
+      (
+        bill_id,
+        product_id,
+        product_name,
+        client_id,
+        quantity,
+        unit_price,
+        product_price_snapshot,
+        total_price,
+        created_by
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           newBillId,
           item.productId,
