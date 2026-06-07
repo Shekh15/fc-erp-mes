@@ -7,24 +7,31 @@
 
     <!-- Quantity (Kept simple, changes only by 1) -->
     <div class="cell qty-cell">
-        <button class="step" type="button" (click)="decQty()">−</button>
-        <div class="value">{{ qty }}</div>
-        <button class="step" type="button" (click)="incQty()">+</button>
+        <button class="step" step="1" type="button" (click)="decQty()">−</button>
+        <input class="value" formControlName="qty"/>
+        <button class="step" step="1" type="button" (click)="incQty()">+</button>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- Unit Price (With Dynamic Decimal Steps) -->
     <div class="cell price-cell">
         <!-- Pass the dynamic step value from the directive reference -->
         <button class="step" step="0.25" type="button" (click)="decPrice(priceInputRef.currentStep)">−</button>
-        
-        <input 
-            class="value" 
-            formControlName="unitPrice"
-            appTwoDecimal
-            #priceInputRef="appTwoDecimal"
-            placeholder="0.00"
-        />
-        
+
+        <input class="value" formControlName="unitPrice" appTwoDecimal #priceInputRef="appTwoDecimal"
+            placeholder="0.00" />
+
         <!-- Pass the dynamic step value from the directive reference -->
         <button class="step" step="0.25" type="button" (click)="incPrice(priceInputRef.currentStep)">+</button>
     </div>

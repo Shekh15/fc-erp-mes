@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+} from '@angular/forms';
 import { ProductRowComponent } from '../product-row/product-row.component';
 import { BillService } from '../../services/bill.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,10 +19,9 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ProductRowComponent],
   templateUrl: './bill-generator.component.html',
-  styleUrls: ['./bill-generator.component.scss']
+  styleUrls: ['./bill-generator.component.scss'],
 })
 export class BillGeneratorComponent implements OnInit {
-
   products: Product[] = [];
   clients: Client[] = [];
 
@@ -39,8 +44,8 @@ export class BillGeneratorComponent implements OnInit {
     private fb: FormBuilder,
     private billService: BillService,
     private productService: ProductService,
-    private clientService: ClientService
-  ) { }
+    private clientService: ClientService,
+  ) {}
 
   ngOnInit() {
     this.initForm();
@@ -49,12 +54,18 @@ export class BillGeneratorComponent implements OnInit {
     this.loadProducts();
     this.loadBillsFromServer();
 
-
+    // Recalculate total automatically
+    // this.billForm.valueChanges.subscribe((value) => {
+    //   this.calculateTotal(value);
+    //   console.log('FORM VALUE:', value);
+    //   console.log('FORM STATE:', this.billForm);
+    // });
     // Recalculate total automatically
     this.billForm.valueChanges.subscribe((value) => {
-      this.calculateTotal();
-      console.log("FORM VALUE:", value);
-      console.log("FORM STATE:", this.billForm);
+      // 🟢 CRITICAL CHANGE: Pass the 'value' payload directly down to your calculation function!
+      this.calculateTotal(value);
+
+      console.log('REAL-TIME ARRAY VALUES:', value.items);
     });
     // this.billForm.get('clientId')?.valueChanges.subscribe(clientId => {
     //   if (!clientId) return;
@@ -65,20 +76,16 @@ export class BillGeneratorComponent implements OnInit {
     //   this.loadClientPriceLists(clientId);
     // });
 
-    this.billForm.get('clientId')?.valueChanges.subscribe(clientId => {
-      console.log("Inside clientId Valuechanges::", clientId);
+    this.billForm.get('clientId')?.valueChanges.subscribe((clientId) => {
+      console.log('Inside clientId Valuechanges::', clientId);
 
       if (!clientId) return;
 
-
-
-      if (!this.isEditMode)
-        this.fetchClientBalance(clientId);
+      if (!this.isEditMode) this.fetchClientBalance(clientId);
       this.loadClientPriceList(clientId);
     });
 
-
-    this.billForm.get('priceListId')?.valueChanges.subscribe(priceListId => {
+    this.billForm.get('priceListId')?.valueChanges.subscribe((priceListId) => {
       if (!priceListId) return;
       this.loadPriceListItems(Number(priceListId));
     });
@@ -110,7 +117,7 @@ export class BillGeneratorComponent implements OnInit {
       paidAmount: [0],
     });
 
-    console.log("FORM STATE inside init:", this.billForm);
+    console.log('FORM STATE inside init:', this.billForm);
   }
 
   get items(): FormArray {
@@ -123,7 +130,7 @@ export class BillGeneratorComponent implements OnInit {
       productName: [product.name],
       qty: [0],
       unitPrice: [product.price],
-      total: [0]
+      total: [0],
     });
   }
 
@@ -134,9 +141,9 @@ export class BillGeneratorComponent implements OnInit {
     this.productService.getProducts().subscribe({
       next: (data: Product[]) => {
         this.products = data;
-        data.forEach(p => this.items.push(this.createItem(p)));
+        data.forEach((p) => this.items.push(this.createItem(p)));
       },
-      error: (err) => console.error('Error loading products:', err)
+      error: (err) => console.error('Error loading products:', err),
     });
   }
 
@@ -145,45 +152,43 @@ export class BillGeneratorComponent implements OnInit {
       next: (data: Client[]) => {
         this.clients = data;
       },
-      error: (err) => console.error('Error loading clients:', err)
+      error: (err) => console.error('Error loading clients:', err),
     });
   }
 
-  // calculateTotal() {
-  //   let total = 0;
-
-  //   this.items.controls.forEach(control => {
-  //     const qty = control.get('qty')?.value || 0;
-  //     const price = control.get('unitPrice')?.value || 0;
-  //     const itemTotal = qty * price;
-  //     control.get('total')?.setValue(itemTotal, { emitEvent: false });
-  //     total += itemTotal;
-  //   });
-
-  //   this.totalBillAmount = total;
-  //   this.billForm.get('total')?.setValue(total, { emitEvent: false });
-  // }
-
-  calculateTotal() {
-    console.log("Calculating total");
+  calculateTotal(formValue?: any) {
+    console.log('Calculating total cleanly');
     let total = 0;
 
-    this.items.controls.forEach(control => {
-      const qty = control.get('qty')?.value || 0;
-      const price = control.get('unitPrice')?.value || 0;
+    // Fallback to the live form state instance if the runtime payload object is missing
+    const currentValues = formValue ?? this.billForm.getRawValue();
+    const itemsArray = currentValues?.items || [];
 
+    itemsArray.forEach((item: any, index: number) => {
+      const qty = Number(item.qty) || 0;
+      const price = Number(item.unitPrice) || 0;
       const itemTotal = qty * price;
-      control.get('total')?.setValue(itemTotal, { emitEvent: false });
+
+      // Quietly update the UI total text fields in your FormArray structure via index
+      const rowControl = this.items.at(index);
+      if (rowControl) {
+        // { emitEvent: false } is safe here because it prevents infinite total looping
+        rowControl.get('total')?.setValue(itemTotal, { emitEvent: false });
+      }
 
       total += itemTotal;
     });
 
     this.totalBillAmount = total;
+
+    // Quietly save the sum back to your root total control
+    this.billForm.get('total')?.setValue(total, { emitEvent: false });
+
     this.calculateGrandTotal();
   }
 
   calculateGrandTotal() {
-    console.log("Calculating grand total");
+    console.log('Calculating grand total');
     const paid = this.billForm.get('paidAmount')?.value || 0;
 
     this.grandTotal = this.totalBillAmount + this.clientDueAmount;
@@ -193,11 +198,12 @@ export class BillGeneratorComponent implements OnInit {
   loadBillsFromServer() {
     this.billService.getBills().subscribe({
       next: (data) => {
-        this.bills = data.sort((a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        this.bills = data.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
       },
-      error: (err) => console.error('Error loading bills:', err)
+      error: (err) => console.error('Error loading bills:', err),
     });
   }
 
@@ -207,11 +213,10 @@ export class BillGeneratorComponent implements OnInit {
     const formValue = {
       ...this.billForm.value,
       previousAmount: this.clientDueAmount,
-      total: Number(this.totalBillAmount)
-    }
+      total: Number(this.totalBillAmount),
+    };
 
-    console.log("Form value while save and update:::", formValue);
-
+    console.log('Form value while save and update:::', formValue);
 
     if (this.isEditMode && this.editingBillId) {
       this.billService.updateBill(this.editingBillId, formValue).subscribe({
@@ -220,41 +225,38 @@ export class BillGeneratorComponent implements OnInit {
             icon: 'success',
             title: 'Bill Updated!',
             text: 'The bill has been successfully Updated.',
-            confirmButtonColor: '#0f2b2e'
+            confirmButtonColor: '#0f2b2e',
           });
           this.resetForm();
           this.loadBillsFromServer();
-          console.log("After reset form:::", this.billForm);
+          console.log('After reset form:::', this.billForm);
         },
         error: () => {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Something went wrong!'
+            text: 'Something went wrong!',
           });
-        }
+        },
       });
     } else {
-
       const newBill = {
         ...formValue,
-        clientName: this.clients.find(c => c.id == formValue.clientId)?.name,
+        clientName: this.clients.find((c) => c.id == formValue.clientId)?.name,
         items: formValue.items,
         entry_date: new Date(),
       };
 
       this.billService.saveBill(newBill).subscribe({
         next: (savedBill) => {
-
           Swal.fire({
             icon: 'success',
-            title: 'Bill Generated Successfully!'
+            title: 'Bill Generated Successfully!',
           });
 
           this.resetForm();
           this.loadBillsFromServer();
-
-        }
+        },
       });
       // const newBill = {
       //   ...formValue,
@@ -290,79 +292,94 @@ export class BillGeneratorComponent implements OnInit {
     }
   }
 
-  //   this.billService.addLedgerEntry({
-  //   client_id: bill.clientId,
-  //   reference_type: "BILL",
-  //   reference_id: bill.id,
-  //   debit: this.grandTotal,
-  //   credit: this.billForm.value.paidAmount,
-  //   entry_date: new Date(),
-  //   created_by: 1 // logged in user
-  // });
-
-
   addLedgerEntry(bill: any) {
-
     const ledgerEntry = {
       client_id: parseInt(bill.clientId, 10),
-      reference_type: "BILL",
+      reference_type: 'BILL',
       reference_id: bill.id,
       debit: this.totalBillAmount,
       credit: bill.paidAmount || 0,
       entry_date: new Date(),
-      created_by: 1 // logged-in user id
+      created_by: 1, // logged-in user id
     };
 
     this.billService.addLedgerEntry(ledgerEntry).subscribe({
       next: () => {
         Swal.fire({
           icon: 'success',
-          title: 'Bill Generated & Ledger Updated!'
+          title: 'Bill Generated & Ledger Updated!',
         });
 
         this.resetForm();
         this.loadBillsFromServer();
-      }
+      },
     });
   }
 
   editBill(bill: any) {
+    console.log('Editing bill:::', bill);
 
-    console.log("Editing bill:::", bill);
-    
     this.isEditMode = true;
     this.editingBillId = bill.original_bill_id;
 
     this.clientDueAmount = bill.previousAmount;
 
+    // this.billForm.patchValue({ priceListId: lists[0].id });
+    // this.loadPriceListItems(lists[0].id);
+
     this.billService.getClientLedgerBalance(bill.clientId).subscribe({
       next: (res) => {
+        console.log('Client ledger balance:::', res);
+        console.log('Previous amount during edit::', this.clientDueAmount);
 
-        console.log("Client ledger balance:::", res);
-        console.log("Previous amount during edit::", this.clientDueAmount);
+        // 1. Clear any current elements out of your FormArray
+        this.items.clear({ emitEvent: false });
 
-        this.billForm.patchValue({
-          ...bill,
-          paidAmount: Number(bill.paidAmount),
-          inhouse: !!bill.inhouse
-        });
-      }
+        // 2. Explicitly reconstruct FormGroup loops inside the items array matching the incoming data
+        if (bill.items && Array.isArray(bill.items)) {
+          bill.items.forEach((item: any) => {
+            const itemGroup = this.fb.group({
+              productId: [item.productId],
+              productName: [item.productName],
+              qty: [Number(item.qty) || 0],
+              unitPrice: [Number(item.unitPrice) || 0],
+              total: [Number(item.total) || 0],
+            });
+            this.items.push(itemGroup, { emitEvent: false });
+          });
+        }
+
+        // 3. Now patch the root-level controls on the billForm
+        this.billForm.patchValue(
+          {
+            id: bill.id,
+            clientId: bill.clientId,
+            clientName: bill.clientName,
+            priceListId: bill.priceListId,
+            inhouse: !!bill.inhouse,
+            total: bill.total,
+            paidAmount: Number(bill.paidAmount),
+          },
+          { emitEvent: false },
+        ); // 👈 Fire 'true' here to let valueChanges run the total sums once setup finishes!
+
+        console.log(
+          'Form state after patching bill for edit:::',
+          this.billForm,
+        );
+      },
     });
-
-    // this.items.clear();
-    // bill.items.forEach((item: any) => {
-    //   this.items.push(this.fb.group(item));
-    // });
   }
 
   fetchClientBalance(clientId: number) {
-
-    console.log("Fetching client balance");
+    console.log('Fetching client balance');
     this.billService.getClientLedgerBalance(clientId).subscribe({
       next: (res) => {
-        this.clientDueAmount = this.isEditMode ? this.clientDueAmount : res.balance || 0;
+        this.clientDueAmount = this.isEditMode
+          ? this.clientDueAmount
+          : res.balance || 0;
         this.calculateGrandTotal();
-      }
+      },
     });
   }
 
@@ -370,8 +387,8 @@ export class BillGeneratorComponent implements OnInit {
     this.billService.getAllPriceLists().subscribe({
       next: (lists: any[]) => {
         this.priceLists = lists;
-        console.log("All price lists:::", this.priceLists);
-      }
+        console.log('All price lists:::', this.priceLists);
+      },
     });
   }
 
@@ -380,13 +397,13 @@ export class BillGeneratorComponent implements OnInit {
       next: (lists) => {
         // this.priceLists = lists;
 
-        console.log("Client specific price lists:::", lists);
+        console.log('Client specific price lists:::', lists);
 
         if (lists.length) {
           this.billForm.patchValue({ priceListId: lists[0].id });
           this.loadPriceListItems(lists[0].id);
         }
-      }
+      },
     });
   }
 
@@ -396,15 +413,17 @@ export class BillGeneratorComponent implements OnInit {
         this.items.clear();
 
         items.forEach((item: any) => {
-          this.items.push(this.fb.group({
-            productId: item.product_id,
-            productName: item.productName,
-            qty: 0,
-            unitPrice: item.price,
-            total: 0
-          }));
+          this.items.push(
+            this.fb.group({
+              productId: item.product_id,
+              productName: item.productName,
+              qty: 0,
+              unitPrice: item.price,
+              total: 0,
+            }),
+          );
         });
-      }
+      },
     });
   }
 
@@ -419,9 +438,9 @@ export class BillGeneratorComponent implements OnInit {
       priceListId: null,
       inhouse: true,
       total: 0,
-      paidAmount: 0
+      paidAmount: 0,
     });
-    
+
     this.items.clear();
     this.loadProducts();
     this.totalBillAmount = 0;
@@ -437,6 +456,4 @@ export class BillGeneratorComponent implements OnInit {
   get itemControls(): FormGroup[] {
     return this.items.controls as FormGroup[];
   }
-
-
 }
