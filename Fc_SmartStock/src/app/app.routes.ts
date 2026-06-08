@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ViewBillComponent } from './components/view-bill/view-bill.component';
 
 export const appRoutes: Routes = [
   {
@@ -8,6 +9,10 @@ export const appRoutes: Routes = [
   {
     path: 'daily-production-record',
     loadComponent: () => import('./components/daily-production-record/daily-production-record.component').then(m => m.DailyProductionRecordComponent)
+  },
+  {
+    path: 'bills/view/:id',
+    loadComponent: () => import('./components/view-bill/view-bill.component').then(m=>m.ViewBillComponent)
   },
   {
     path: '',

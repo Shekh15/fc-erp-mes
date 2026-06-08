@@ -11,6 +11,18 @@ exports.getAll = async () => {
   return rows;
 };
 
+// ================= GET BY ID =================
+exports.getById = async (id) => {
+  const [rows] = await pool.query(
+    `SELECT * FROM Fc_bills 
+     WHERE id = ? 
+     AND is_active = 1
+     ORDER BY id ASC`,
+     [id]
+  );
+  return rows;
+};
+
 // ================= CREATE =================
 exports.create = async (data, userId) => {
   const conn = await pool.getConnection();
@@ -163,8 +175,7 @@ exports.update = async (originalBillId, data, userId) => {
       `
       SELECT * FROM Fc_bills
       WHERE original_bill_id = ?
-      AND is_active = 1
-    `,
+      AND is_active = 1`,
       [originalBillId],
     );
 

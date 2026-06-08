@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Product, ProductService } from '../../services/product.service';
 import { Client, ClientService } from '../../core/services/client.service';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-bill-generator',
@@ -22,6 +23,9 @@ import Swal from 'sweetalert2';
   styleUrls: ['./bill-generator.component.scss'],
 })
 export class BillGeneratorComponent implements OnInit {
+
+  private router = inject(Router);
+  
   products: Product[] = [];
   clients: Client[] = [];
 
@@ -450,9 +454,11 @@ export class BillGeneratorComponent implements OnInit {
     this.remainingBalance = 0;
   }
 
-  viewBill(id: string) {
+  viewBill(id: number) {
     console.log('Viewing bill:', id);
-  }
+    this.router.navigate(['/bills/view', id]);
+}
+  
 
   get itemControls(): FormGroup[] {
     return this.items.controls as FormGroup[];

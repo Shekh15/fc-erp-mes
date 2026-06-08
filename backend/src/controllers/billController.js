@@ -18,6 +18,17 @@ exports.getBills = async (req, res, next) => {
   }
 };
 
+exports.getBillById = async (req, res, next) => {
+  try {
+    const bill = await Bill.getById(req.params.id);
+
+    res.json(bill);
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.createBill = async (req, res, next) => {
   try {
     const userId = 1; // TODO: replace with req.user.id

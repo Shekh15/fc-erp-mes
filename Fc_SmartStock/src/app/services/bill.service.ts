@@ -19,6 +19,10 @@ export class BillService {
     return this.http.get<any[]>(this.billUrl);
   }
 
+  getBillById(id:string): Observable<any> {
+    return this.http.get(`${this.billUrl}/${id}`);
+  }
+
   saveBill(bill: any): Observable<any> {
     return this.http.post(this.billUrl, bill);
   }

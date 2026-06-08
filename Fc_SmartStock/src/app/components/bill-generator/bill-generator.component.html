@@ -92,7 +92,10 @@
         <div class="recent">
             <h3>Recently Generated Bills</h3>
             <div class="bills">
-                <div *ngFor="let b of bills; let idx = index" class="bill-card" [ngClass]="'c'+(idx % 4 + 1)">
+
+                @for (b of bills; track b.id; let idx = $index;) {
+
+                <div class="bill-card" [ngClass]="'c'+(idx % 4 + 1)">
                     <div class="bill-title">{{ b.clientName }}
                         <div class="bill-actions">
                             <i class="bi bi-eye-fill mx-2 clickable-icon" (click)="viewBill(b.id)"></i>
@@ -104,6 +107,7 @@
                         <span class="badge text-bg-dark paid-amount">₹ {{ b.paidAmount }}</span>
                     </div>
                 </div>
+                }
             </div>
         </div>
 
