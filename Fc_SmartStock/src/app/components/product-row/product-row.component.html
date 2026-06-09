@@ -1,31 +1,21 @@
 <div class="row" [formGroup]="group">
 
     <!-- Product Name -->
-    <div class="cell product-name">
+    <div class="cell product-name p-2">
         {{ group.get('productName')?.value }}
     </div>
 
     <!-- Quantity (Kept simple, changes only by 1) -->
-    <div class="cell qty-cell">
+    <div class="cell qty-cell p-2">
         <button class="step" step="1" type="button" (click)="decQty()">−</button>
         <input class="value" formControlName="qty"/>
         <button class="step" step="1" type="button" (click)="incQty()">+</button>
     </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
     <!-- Unit Price (With Dynamic Decimal Steps) -->
-    <div class="cell price-cell">
+    <div class="cell price-cell p-2">
+        <span class="price-label">₹</span>
         <!-- Pass the dynamic step value from the directive reference -->
         <button class="step" step="0.25" type="button" (click)="decPrice(priceInputRef.currentStep)">−</button>
 
@@ -37,7 +27,7 @@
     </div>
 
     <!-- Total Display -->
-    <div class="cell total-cell">
+    <div class="cell total-cell p-2">
         <!-- Renders standard Indian localization format with 2 fixed decimals -->
         ₹ {{ total | number:'1.2-2' }}
     </div>
