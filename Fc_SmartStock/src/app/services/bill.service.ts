@@ -19,8 +19,16 @@ export class BillService {
     return this.http.get<any[]>(this.billUrl);
   }
 
-  getBillById(id:string): Observable<any> {
+  getBillById(id: string): Observable<any> {
     return this.http.get(`${this.billUrl}/${id}`);
+  }
+
+  getBillHistory(id: string) {
+    return this.http.get<any[]>(`${this.billUrl}/${id}/history`);
+  }
+
+  getBillVersion(id: string) {
+    return this.http.get(`${this.billUrl}/version/${id}`);
   }
 
   saveBill(bill: any): Observable<any> {

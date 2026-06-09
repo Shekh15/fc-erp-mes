@@ -13,15 +13,50 @@ exports.getAll = async () => {
 
 // ================= GET BY ID =================
 exports.getById = async (id) => {
-  const [rows] = await pool.query(
-    `SELECT * FROM Fc_bills 
-     WHERE id = ? 
-     AND is_active = 1
-     ORDER BY id ASC`,
-     [id]
+  
+  const [billRows] = await pool.query(
+    `
+    SELECT *
+    FROM Fc_bills
+    WHERE id = ?
+      AND is_active = 1
+    `,
+    [id],
   );
-  return rows;
+
+  if (!billRows.length) {
+    return [];
+  }
+
+  const bill = billRows[0];
+
+  const [itemRows] = await pool.query(
+    `
+    SELECT
+      product_id,
+      product_name,
+      quantity,
+      unit_price,
+      total_price
+    FROM Fc_bill_items
+    WHERE bill_id = ?
+      AND quantity > 0
+    ORDER BY id
+    `,
+    [id],
+  );
+
+  bill.items = itemRows.map((item) => ({
+    productId: item.product_id,
+    productName: item.product_name,
+    qty: Number(item.quantity),
+    unitPrice: Number(item.unit_price),
+    total: Number(item.total_price),
+  }));
+
+  return bill;
 };
+
 
 // ================= CREATE =================
 exports.create = async (data, userId) => {
@@ -436,4 +471,84 @@ exports.reversePayment = async (ledgerId, userId) => {
     conn.release();
     throw err;
   }
+};
+
+exports.getBillHistory = async (billId) => {
+
+  const [billRows] = await pool.query(
+    `
+    SELECT original_bill_id
+    FROM Fc_bills
+    WHERE id = ?
+    `,
+    [billId]
+  );
+
+  if (!billRows.length) {
+    return [];
+  }
+
+  const originalBillId = billRows[0].original_bill_id;
+
+  const [historyRows] = await pool.query(
+    `
+    SELECT
+      id,
+      version_number,
+      total,
+      payment_status,
+      is_active,
+      createdAt
+    FROM Fc_bills
+    WHERE original_bill_id = ?
+    ORDER BY version_number DESC
+    `,
+    [originalBillId]
+  );
+
+  return historyRows;
+};
+
+exports.getVersionById = async (id) => {
+  
+  const [billRows] = await pool.query(
+    `
+    SELECT *
+    FROM Fc_bills
+    WHERE id = ?
+    `,
+    [id],
+  );
+
+  if (!billRows.length) {
+    return [];
+  }
+
+  const bill = billRows[0];
+
+  const [itemRows] = await pool.query(
+    `
+    SELECT
+      product_id,
+      product_name,
+      quantity,
+      unit_price,
+      total_price
+    FROM Fc_bill_items
+    WHERE bill_id = ?
+      AND quantity > 0
+    ORDER BY id
+    `,
+    [id],
+  );
+
+  bill.items = itemRows.map((item) => ({
+    productId: item.product_id,
+    productName: item.product_name,
+    qty: Number(item.quantity),
+    unitPrice: Number(item.unit_price),
+    total: Number(item.total_price),
+  }));
+
+  return bill;
 };

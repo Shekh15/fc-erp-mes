@@ -48,3 +48,25 @@ exports.updateBill = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getBillHistory = async (req, res) => {
+  try {
+    const result = await Bill.getBillHistory(req.params.id);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    });
+  }
+};
+
+exports.getBillVersionById = async (req, res, next) => {
+  try {
+    const bill = await Bill.getVersionById(req.params.id);
+
+    res.json(bill);
+
+  } catch (err) {
+    next(err);
+  }
+};

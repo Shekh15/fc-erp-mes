@@ -1,0 +1,32 @@
+.bill-fieldset {
+  padding: 20px;
+  margin: 15px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+}
+
+.bill-fieldset legend {
+  padding: 0 10px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.bill-header {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.bill-summary {
+  margin-top: 15px;
+  text-align: right;
+}
+
+table {
+  width: 100%;
+}
+
+.paid-amount{
+    background-color: lightblue;
+}

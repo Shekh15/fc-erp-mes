@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const billController = require("../controllers/billController");
+const BillController = require("../controllers/billController");
 
-router.get("/", billController.getBills);
-router.get("/:id", billController.getBillById);
-router.post("/", billController.createBill);
-router.patch("/:id", billController.updateBill);
+router.get("/", BillController.getBills);
+router.get("/:id", BillController.getBillById);
+router.post("/", BillController.createBill);
+router.patch("/:id", BillController.updateBill);
+router.get("/:id/history", BillController.getBillHistory);
+router.get("/version/:id", BillController.getBillVersionById);
 
 module.exports = router;
