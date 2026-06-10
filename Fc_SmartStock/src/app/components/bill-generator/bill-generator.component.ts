@@ -23,9 +23,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./bill-generator.component.scss'],
 })
 export class BillGeneratorComponent implements OnInit {
-
   private router = inject(Router);
-  
+
   products: Product[] = [];
   clients: Client[] = [];
 
@@ -206,7 +205,7 @@ export class BillGeneratorComponent implements OnInit {
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
-        console.log("Loadedd bills from serve:::",this.bills);
+        console.log('Loadedd bills from serve:::', this.bills);
       },
       error: (err) => console.error('Error loading bills:', err),
     });
@@ -254,46 +253,32 @@ export class BillGeneratorComponent implements OnInit {
 
       this.billService.saveBill(newBill).subscribe({
         next: (savedBill) => {
+          // Swal.fire({
+          //   icon: 'success',
+          //   title: 'Bill Generated Successfully!',
+          // });
+
+          // this.resetForm();
+          // this.loadBillsFromServer();
+
+          this.loadBillsFromServer();
+
           Swal.fire({
             icon: 'success',
             title: 'Bill Generated Successfully!',
+            showCancelButton: true,
+            confirmButtonText: 'View Invoice',
+            cancelButtonText: 'Close',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.router.navigate(['/bills/view', savedBill.id]);
+            } else {
+              this.resetForm();
+            }
           });
-
-          this.resetForm();
-          this.loadBillsFromServer();
+          
         },
       });
-      // const newBill = {
-      //   ...formValue,
-      //   id: uuidv4(),
-      //   clientName: this.clients.find(c => c.id == formValue.clientId)?.name,
-      //   createdAt: new Date().toISOString(),
-      //   items: formValue.items.map((it: any, idx: number) => ({
-      //     ...it,
-      //     id: `i-${idx}-${Date.now()}-${formValue.clientId}`,
-      //     total: it.qty * it.unitPrice
-      //   }))
-      // };
-
-      // this.billService.saveBill(newBill).subscribe({
-      //   next: () => {
-      //     Swal.fire({
-      //       icon: 'success',
-      //       title: 'Bill Generated!',
-      //       text: 'The bill has been successfully Created.',
-      //       confirmButtonColor: '#0f2b2e'
-      //     });
-      //     this.resetForm();
-      //     this.loadBillsFromServer();
-      //   },
-      //   error: () => {
-      //     Swal.fire({
-      //       icon: 'error',
-      //       title: 'Oops...',
-      //       text: 'Something went wrong!'
-      //     });
-      //   }
-      // });
     }
   }
 
@@ -457,8 +442,7 @@ export class BillGeneratorComponent implements OnInit {
   viewBill(id: number) {
     console.log('Viewing bill:', id);
     this.router.navigate(['/bills/view', id]);
-}
-  
+  }
 
   get itemControls(): FormGroup[] {
     return this.items.controls as FormGroup[];

@@ -1,88 +1,101 @@
-<button
-  type="button"
-  class="btn btn-secondary fw-bold m-3"
-  (click)="goBack()">
-   ← Back
+<button type="button" class="btn btn-secondary fw-bold m-3" (click)="goBack()">
+    ← Back
 </button>
 
 @if (bill) {
-<fieldset class="bill-fieldset">
-    <legend>
-        Bill #{{ bill.id }} - {{ bill.is_active ? 'Current' : 'Version ' + bill.version_number }}
-    </legend>
 
-    <div class="bill-header">
+<button class="btn btn-success float-end m-3 fw-bold" (click)="downloadPdf()">
+    <i class="bi bi-download fw-bold"></i>
+    Download Invoice
+</button>
 
-        <div>
-            <strong>Client:</strong>
-            {{ bill.clientName }}
+<div id="invoice-content">
+
+    <!-- Company Header -->
+    <h2 class="text-center">First Choice</h2>
+
+    <fieldset class="bill-fieldset">
+        <legend>
+            Bill #{{ bill.id }} - {{ bill.is_active ? 'Current' : 'Version ' + bill.version_number }}
+        </legend>
+
+        <div class="bill-header">
+            <div>
+                <strong>Client:</strong>
+                {{ bill.clientName }}
+            </div>
+
+            <div>
+                <strong>Price List:</strong>
+                {{ bill.priceListId }}
+            </div>
+
+            <div>
+                <strong>Status:</strong>
+                {{ bill.payment_status }}
+            </div>
+
+            <div>
+                <strong>Date:</strong>
+                {{ bill.createdAt | date:'dd/MM/yyyy hh:mm a' }}
+            </div>
+
         </div>
 
-        <div>
-            <strong>Price List:</strong>
-            {{ bill.priceListId }}
+        <hr>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @for(item of billItems;track item.productId) {
+
+                <tr>
+                    <td>{{ item.productName }}</td>
+                    <td>{{ item.qty }}</td>
+                    <td>₹ {{ item.unitPrice }}</td>
+                    <td>₹ {{ item.total }}</td>
+                </tr>
+
+                }
+
+            </tbody>
+        </table>
+
+        <div class="bill-summary px-3">
+
+            <p>
+                <strong>Previous Amount:</strong>
+                ₹ {{ bill.previousAmount }}
+            </p>
+
+            <p>
+                <strong class="paid-amount p-2">Paid Amount: ₹ {{ bill.paidAmount }}</strong>
+
+            </p>
+
+            <p>
+                <strong>Grand Total:</strong>
+                ₹ {{ bill.total }}
+            </p>
+
         </div>
 
-        <div>
-            <strong>Status:</strong>
-            {{ bill.payment_status }}
-        </div>
+    </fieldset>
 
-        <div>
-            <strong>Date:</strong>
-            {{ bill.createdAt | date:'dd/MM/yyyy hh:mm a' }}
-        </div>
+</div>
 
-    </div>
 
-    <hr>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Rate</th>
-                <th>Total</th>
-            </tr>
-        </thead>
 
-        <tbody>
-
-            @for(item of billItems;track item.productId) {
-
-            <tr>
-                <td>{{ item.productName }}</td>
-                <td>{{ item.qty }}</td>
-                <td>₹ {{ item.unitPrice }}</td>
-                <td>₹ {{ item.total }}</td>
-            </tr>
-
-            }
-
-        </tbody>
-    </table>
-
-    <div class="bill-summary px-3">
-
-        <p>
-            <strong>Previous Amount:</strong>
-            ₹ {{ bill.previousAmount }}
-        </p>
-
-        <p>
-            <strong class="paid-amount p-2">Paid Amount: ₹ {{ bill.paidAmount }}</strong>
-            
-        </p>
-
-        <p>
-            <strong>Grand Total:</strong>
-            ₹ {{ bill.total }}
-        </p>
-
-    </div>
-
-</fieldset>
 }
 
 <fieldset class="bill-fieldset">

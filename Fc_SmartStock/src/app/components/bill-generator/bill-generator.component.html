@@ -71,7 +71,7 @@
                         </div>
 
                         <div class="actions my-2">
-                            <button class="generate" [disabled]="billForm.invalid" (click)="saveOrUpdateBill()">
+                            <button type="button" class="generate" [disabled]="billForm.invalid" (click)="saveOrUpdateBill()">
                                 {{ isEditMode ? 'Update Bill' : 'Generate Bill' }}
                             </button>
                         </div>

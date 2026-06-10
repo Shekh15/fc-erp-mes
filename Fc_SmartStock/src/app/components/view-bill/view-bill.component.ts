@@ -3,6 +3,8 @@ import { BillService } from '../../services/bill.service';
 import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-view-bill',
@@ -11,15 +13,12 @@ import { Router } from '@angular/router';
   styleUrl: './view-bill.component.scss',
 })
 export class ViewBillComponent {
-
-
   @Input() id!: string;
 
   private router = inject(Router);
 
   bill: any;
   history: any[] = [];
-
 
   constructor(private billService: BillService) {}
 
@@ -50,9 +49,7 @@ export class ViewBillComponent {
   }
 
   loadBillVersion(id: string) {
-
-    console.log('Version Id:::',id);
-
+    console.log('Version Id:::', id);
 
     this.billService.getBillVersion(id).subscribe({
       next: (res: any) => {
@@ -67,7 +64,6 @@ export class ViewBillComponent {
         });
       },
     });
-
   }
 
   getBillHistory() {
@@ -86,10 +82,31 @@ export class ViewBillComponent {
     });
   }
 
+  goBack(): void {
+    this.router.navigate(['/smartbilling']);
+  }
 
-goBack(): void {
-  this.router.navigate(['/smartbilling']);
-}
+  downloadPdf() {
+    const invoice = document.getElementById('invoice-content');
+
+    if (!invoice) return;
+
+    html2canvas(invoice, {
+      scale: 4,
+    }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+
+      const pageHeight = (canvas.height * pageWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+
+      pdf.save(`Invoice-${this.bill.id}.pdf`);
+    });
+  }
 
   get billItems() {
     return this.bill?.items?.filter((x: any) => x.qty > 0) || [];
