@@ -18,10 +18,11 @@ RUN npm run build
 # ---------- Runtime Stage ----------
 FROM nginx:alpine
 
-# Remove default nginx page
 RUN rm -rf /usr/share/nginx/html/*
 
-# IMPORTANT: copy from browser subfolder
 COPY --from=build /app/dist/fc-smart-stock/browser/ /usr/share/nginx/html/
+
+# Copy custom nginx config
+COPY Fc_SmartStock/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
