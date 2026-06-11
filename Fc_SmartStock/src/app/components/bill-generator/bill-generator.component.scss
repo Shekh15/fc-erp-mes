@@ -49,8 +49,8 @@
   border: 2px solid #dfeaf0;
   font-size: 20px;
   font-weight: 600;
-  color: #0f2b2e;
-  margin-bottom: 14px;
+  // color: #0f2b2e;
+  // margin-bottom: 14px;
   background: white;
 }
 
@@ -151,16 +151,22 @@
   margin-top: 6px;
 }
 
-/* responsiveness */
-@media (max-width: 480px) {
-  .card {
-    width: 96%;
-  }
+// /* responsiveness */
+// @media (max-width: 480px) {
 
-  .table-header {
-    grid-template-columns: 1fr 140px 100px 90px;
+//   .table-header {
+//     grid-template-columns: 1fr 140px 100px 90px;
+//   }
+// }
+
+@media(max-width: 480px) {
+  .select-wrap select{
+
+  font-size: 16px;
+
   }
 }
+
 
 
 .no-records-found {

@@ -20,7 +20,8 @@
                         </label>
                     </div> -->
 
-                        <div class="select-wrap">
+                    <div class="row">
+                        <div class="col-6 select-wrap">
                             <select formControlName="clientId">
                                 <option [ngValue]="null" disabled>Option</option>
                                 <option *ngFor="let c of clients" [value]="c.id">
@@ -28,8 +29,7 @@
                                 </option>
                             </select>
                         </div>
-
-                        <div class="select-wrap" *ngIf="priceLists.length">
+                         <div class="col-6 select-wrap" *ngIf="priceLists.length">
                             <select formControlName="priceListId">
 
                                 <option [ngValue]="null">Select Price List</option>
@@ -40,6 +40,11 @@
 
                             </select>
                         </div>
+                    </div>
+
+
+
+
 
                         <div class="items-container" formArrayName="items">
                             <div *ngFor="let group of itemControls; let i = index">
@@ -89,7 +94,7 @@
         </div>
     </div>
     <div class="col-lg-4 col-md-12 col-sm-12">
-        <div class="recent">
+        <div class="recent m-2">
             <h3>Recently Generated Bills</h3>
             <div class="bills">
 

@@ -58,7 +58,20 @@
 @media (max-width: 520px) {
   .row {
     grid-template-columns: 1fr;
-    gap: 6px;
+    // gap: 6px;
+  }
+
+  .cell product-name{
+    font-size: 15px;
+  }
+
+  .cell .value{
+    height: 30px;
+  }
+
+  .cell .step{
+    width: 30px;
+    height: 30px;
   }
 }
 
