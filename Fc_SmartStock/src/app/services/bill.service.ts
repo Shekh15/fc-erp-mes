@@ -39,7 +39,7 @@ export class BillService {
     return this.http.patch(`${this.billUrl}/${id}`, data);
   }
 
-  downloadInvoice(id: number) {
+  downloadPdf(id: string) {
     return this.http.get(`${this.billUrl}/${id}/pdf`, {
       responseType: 'blob',
     });

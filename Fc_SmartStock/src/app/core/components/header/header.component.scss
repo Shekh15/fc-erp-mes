@@ -1,6 +1,10 @@
 .navbar {
   background-color: #0f6871;
 }
+
+.navbar .navbar-nav {
+  flex-direction: row;
+}
 .navbar .navbar-nav .nav-link {background: #0f6871;
   font-weight: 800;
   color: #fff;

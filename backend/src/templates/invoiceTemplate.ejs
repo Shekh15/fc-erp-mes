@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .bill-fieldset {
+            padding: 20px;
+            margin: 15px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .bill-fieldset legend {
+            background-color: #0f0c0c;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 18px;
+            border-radius: 4px;
+        }
+
+        .bill-header {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .bill-summary {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        th {
+            background: #f5f5f5;
+        }
+
+        .paid-amount {
+            background-color: lightblue;
+            padding: 5px 10px;
+        }
+
+        hr {
+            margin: 15px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="invoice-content">
+
+        <h2 class="text-center">First Choice</h2>
+
+        <fieldset class="bill-fieldset">
+
+            <legend>
+                Bill #<%= bill.id %>
+                    -
+                    <%= bill.is_active ? 'Current' : 'Version ' + bill.version_number %>
+            </legend>
+
+            <div class="bill-header">
+
+                <div>
+                    <strong>Client:</strong>
+                    <%= bill.clientName %>
+                </div>
+
+                <div>
+                    <strong>Price List:</strong>
+                    <%= bill.priceListId || '-' %>
+                </div>
+
+                <div>
+                    <strong>Status:</strong>
+                    <%= bill.payment_status %>
+                </div>
+
+                <div>
+                    <strong>Date:</strong>
+                    <%= new Date(bill.createdAt).toLocaleString('en-IN') %>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Rate</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <% bill.items.forEach(item=> { %>
+
+                        <tr class="text-center">
+                            <td>
+                                <%= item.productName %>
+                            </td>
+                            <td>
+                                <%= item.qty %>
+                            </td>
+                            <td>₹ <%= item.unitPrice %>
+                            </td>
+                            <td>₹ <%= item.total %>
+                            </td>
+                        </tr>
+
+                        <% }) %>
+
+                </tbody>
+
+            </table>
+
+            <div class="bill-summary">
+
+                <p>
+                    <strong>Total :</strong>
+                    ₹ <%= bill.total %>
+                </p>
+
+                <p>
+                    <strong>Due :</strong>
+                    ₹ <%= bill.previousAmount %>
+                </p>
+
+                <p>
+                    <strong class="paid-amount">
+                        Paid Amount:
+                        ₹ <%= bill.paidAmount %>
+                    </strong>
+                </p>
+
+                <p>
+                    <strong>Grand Total:</strong>
+                    ₹ <%= bill.total %>
+                </p>
+
+            </div>
+
+        </fieldset>
+
+    </div>
+
+</body>
+
+</html>

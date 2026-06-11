@@ -51,6 +51,15 @@ export class ViewBillComponent {
   loadBillVersion(id: string) {
     console.log('Version Id:::', id);
 
+    if (!id) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Invalid version ID!',
+      });
+      return;
+    }
+
     this.billService.getBillVersion(id).subscribe({
       next: (res: any) => {
         this.bill = res;
@@ -67,6 +76,16 @@ export class ViewBillComponent {
   }
 
   getBillHistory() {
+    if (!this.id) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Invalid bill ID!',
+      });
+      return;
+    }
+
+
     this.billService.getBillHistory(this.id).subscribe({
       next: (res: any) => {
         this.history = res;
@@ -86,41 +105,29 @@ export class ViewBillComponent {
     this.router.navigate(['/smartbilling']);
   }
 
-  downloadPdf() {
-    const invoice = document.getElementById('invoice-content');
+  downloadBillPdf(id: string) {
 
-    if (!invoice) return;
+    if (!id) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Invalid bill ID!',
+      });
+      return;
+    }
 
-    html2canvas(invoice, {
-      scale: 4,
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const pageWidth = pdf.internal.pageSize.getWidth();
-
-      const pageHeight = (canvas.height * pageWidth) / canvas.width;
-
-      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
-
-      pdf.save(`Invoice-${this.bill.id}.pdf`);
-    });
-  }
-
-  downloadInvoice() {
-    this.billService.downloadInvoice(this.bill.id).subscribe((blob) => {
+    this.billService.downloadPdf(id).subscribe((blob) => {
       const url = window.URL.createObjectURL(blob);
 
       const a = document.createElement('a');
 
       a.href = url;
 
-      a.download = `Invoice-${this.bill.id}.pdf`;
+      a.download = `bill-${id}.pdf`;
 
       a.click();
 
-      URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
     });
   }
 

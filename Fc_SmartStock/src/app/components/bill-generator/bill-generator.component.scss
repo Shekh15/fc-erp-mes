@@ -55,9 +55,11 @@
 }
 
 .items-container {
-   max-height: 50vh;       /* fixed height */
-  overflow-y: auto;    /* vertical scroll */
-  overflow-x: hidden; 
+  max-height: 50vh; /* fixed height */
+  border: 1px solid #c8d4da;
+  border-radius: 4px;
+  overflow-y: auto; /* vertical scroll */
+  overflow-x: hidden;
 }
 
 .table {
@@ -146,7 +148,7 @@
 }
 
 .bill-sub {
-  font-size: .75rem;
+  font-size: 0.75rem;
   color: #3e5b5c;
   margin-top: 6px;
 }
@@ -159,15 +161,15 @@
 //   }
 // }
 
-@media(max-width: 480px) {
-  .select-wrap select{
+@media (max-width: 480px) {
+  .select-wrap select {
+    font-size: 1rem;
+  }
 
-  font-size: 16px;
-
+  .card-header {
+    font-size: 1.2rem;
   }
 }
-
-
 
 .no-records-found {
   text-align: center;
@@ -194,8 +196,8 @@
   padding: 18px;
 }
 
-.paid-amount{
-  font-size: .75rem;
+.paid-amount {
+  font-size: 0.75rem;
   height: fit-content;
 }
 

@@ -20,39 +20,39 @@
                         </label>
                     </div> -->
 
-                    <div class="row">
-                        <div class="col-6 select-wrap">
-                            <select formControlName="clientId">
-                                <option [ngValue]="null" disabled>Option</option>
-                                <option *ngFor="let c of clients" [value]="c.id">
-                                    {{ c.name }}
-                                </option>
-                            </select>
+                        <div class="row pb-2">
+                            <div class="col-6 select-wrap">
+                                <select formControlName="clientId">
+                                    <option [ngValue]="null" disabled>Option</option>
+                                    <option *ngFor="let c of clients" [value]="c.id">
+                                        {{ c.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-6 select-wrap" *ngIf="priceLists.length">
+                                <select formControlName="priceListId">
+
+                                    <option [ngValue]="null">Select Price List</option>
+
+                                    <option *ngFor="let p of priceLists" [ngValue]="p.id">
+                                        {{ p.name }}
+                                    </option>
+
+                                </select>
+                            </div>
                         </div>
-                         <div class="col-6 select-wrap" *ngIf="priceLists.length">
-                            <select formControlName="priceListId">
-
-                                <option [ngValue]="null">Select Price List</option>
-
-                                <option *ngFor="let p of priceLists" [ngValue]="p.id">
-                                    {{ p.name }}
-                                </option>
-
-                            </select>
-                        </div>
-                    </div>
 
 
 
 
 
-                        <div class="items-container" formArrayName="items">
+                        <div class="items-container mt-3" formArrayName="items">
                             <div *ngFor="let group of itemControls; let i = index">
                                 <app-product-row [group]="group"></app-product-row>
                             </div>
                         </div>
 
-                        <div class="balance-box">
+                        <div class="balance-box mt-3">
                             Current Bill: <span class="float-end me-4">₹ {{ totalBillAmount | number:'1.2-2' }}</span>
                         </div>
                         <div class="balance-box" *ngIf="clientDueAmount !== null">
@@ -76,7 +76,8 @@
                         </div>
 
                         <div class="actions my-2">
-                            <button type="button" class="generate" [disabled]="billForm.invalid" (click)="saveOrUpdateBill()">
+                            <button type="button" class="generate" [disabled]="billForm.invalid"
+                                (click)="saveOrUpdateBill()">
                                 {{ isEditMode ? 'Update Bill' : 'Generate Bill' }}
                             </button>
                         </div>

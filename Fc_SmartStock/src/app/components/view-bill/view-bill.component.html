@@ -4,14 +4,14 @@
 
 @if (bill) {
 
-<button class="btn btn-success float-end m-3 fw-bold" (click)="downloadPdf()">
+<button class="btn btn-success float-end m-3 fw-bold" (click)="downloadBillPdf(bill.id)">
     <i class="bi bi-download fw-bold"></i>
     Download Invoice
 </button>
 
-<button class="btn btn-success" (click)="downloadInvoice()">
+<!-- <button class="btn btn-success" (click)="downloadInvoice()">
     Download Invoice
-</button>
+</button> -->
 
 <div id="invoice-content">
 
@@ -75,6 +75,11 @@
         </table>
 
         <div class="bill-summary px-3">
+
+            <p>
+                <strong>Total :</strong>
+                ₹ {{ bill.total }}
+            </p>
 
             <p>
                 <strong>Due :</strong>

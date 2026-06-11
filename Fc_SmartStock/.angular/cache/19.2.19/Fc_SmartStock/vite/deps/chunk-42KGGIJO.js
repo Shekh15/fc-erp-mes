@@ -1,16 +1,16 @@
 import {
   withHttpTransferCache
-} from "./chunk-CGLTRGUK.js";
+} from "./chunk-EQJCAHOR.js";
 import {
   EVENT_MANAGER_PLUGINS,
   EventManagerPlugin
-} from "./chunk-RCVCBWBP.js";
+} from "./chunk-P3UQ7IXV.js";
 import {
   getDOM
-} from "./chunk-F4I6XEJE.js";
+} from "./chunk-7WJIRRCZ.js";
 import {
   DOCUMENT
-} from "./chunk-XVNN4Z4S.js";
+} from "./chunk-P6C6KTF7.js";
 import {
   ApplicationRef,
   Console,
@@ -50,7 +50,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-T5EWXOSK.js";
+} from "./chunk-G2GYG57L.js";
 
 // node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs
 var Meta = class _Meta {
@@ -820,4 +820,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-WSUEJUSV.js.map
+//# sourceMappingURL=chunk-42KGGIJO.js.map
