@@ -9,6 +9,10 @@
     Download Invoice
 </button>
 
+<button class="btn btn-success" (click)="downloadInvoice()">
+    Download Invoice
+</button>
+
 <div id="invoice-content">
 
     <!-- Company Header -->
@@ -73,7 +77,7 @@
         <div class="bill-summary px-3">
 
             <p>
-                <strong>Previous Amount:</strong>
+                <strong>Due :</strong>
                 ₹ {{ bill.previousAmount }}
             </p>
 

@@ -108,6 +108,22 @@ export class ViewBillComponent {
     });
   }
 
+  downloadInvoice() {
+    this.billService.downloadInvoice(this.bill.id).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+
+      a.href = url;
+
+      a.download = `Invoice-${this.bill.id}.pdf`;
+
+      a.click();
+
+      URL.revokeObjectURL(url);
+    });
+  }
+
   get billItems() {
     return this.bill?.items?.filter((x: any) => x.qty > 0) || [];
   }

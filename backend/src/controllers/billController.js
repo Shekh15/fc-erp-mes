@@ -1,4 +1,5 @@
 const Bill = require("../models/Bill");
+const PDFDocument = require('pdfkit');
 
 exports.getBills = async (req, res, next) => {
   try {
@@ -69,4 +70,56 @@ exports.getBillVersionById = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+
+exports.downloadInvoice = async (req, res) => {
+
+    const billId = req.params.id;
+
+    console.log(`Generating PDF for Bill ID: ${billId}`);
+
+    const bill = await Bill.getById(billId);
+
+    const doc = new PDFDocument();
+
+    res.setHeader(
+        'Content-Type',
+        'application/pdf'
+    );
+
+    res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=Invoice-${billId}.pdf`
+    );
+
+    doc.pipe(res);
+
+    doc.fontSize(20)
+       .text('First Choice Bakery');
+
+    doc.moveDown();
+
+    doc.text(`Customer: ${bill.clientName}`);
+    doc.text(`Invoice No: ${bill.id}`);
+    doc.text(`Date: ${bill.entry_date}`);
+
+    doc.moveDown();
+
+    bill.items.forEach(item => {
+
+        doc.text(
+            `${item.productName}
+             Qty:${item.qty}
+             Price:${item.unitPrice}
+             Total:${item.total}`
+        );
+
+    });
+
+    doc.moveDown();
+
+    doc.text(`Grand Total: ₹ ${bill.total}`);
+
+    doc.end();
 };

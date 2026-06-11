@@ -39,6 +39,12 @@ export class BillService {
     return this.http.patch(`${this.billUrl}/${id}`, data);
   }
 
+  downloadInvoice(id: number) {
+    return this.http.get(`${this.billUrl}/${id}/pdf`, {
+      responseType: 'blob',
+    });
+  }
+
   // ================= LEDGER =================
 
   getClientLedgerBalance(clientId: number): Observable<{ balance: number }> {

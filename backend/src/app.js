@@ -57,5 +57,13 @@ app.use('/api/payments', paymentRoutes);
 // Error handling middleware
 app.use(errorHandler);
 
+// Angular files
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// SPA fallback
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist/index.html'));
+});
+
 module.exports = app;
 

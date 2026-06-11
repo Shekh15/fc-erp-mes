@@ -8,5 +8,6 @@ router.post("/", BillController.createBill);
 router.patch("/:id", BillController.updateBill);
 router.get("/:id/history", BillController.getBillHistory);
 router.get("/version/:id", BillController.getBillVersionById);
+router.get('/:id/pdf', BillController.downloadInvoice);
 
 module.exports = router;
