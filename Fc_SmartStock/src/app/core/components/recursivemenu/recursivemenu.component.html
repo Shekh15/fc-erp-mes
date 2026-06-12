@@ -1,0 +1,54 @@
+<li>
+
+    @if(menu.children?.length){
+
+    <button class="btn btn-dark w-100 text-start d-flex justify-content-between" (click)="toggle()">
+
+        <span>
+
+            @if(menu.icon){
+            <i [class]="menu.icon"></i>
+            }
+
+            {{ menu.label }}
+
+        </span>
+
+        <span>
+
+            @if(expanded()){
+            ▼
+            } @else {
+            ▶
+            }
+
+        </span>
+
+    </button>
+
+    @if(expanded()){
+
+    <ul class="list-unstyled" [style.padding-left.px]="20">
+
+        @for(child of menu.children; track child.label){
+
+        <app-recursivemenu [menu]="child" [level]="level + 1">
+        </app-recursivemenu>
+
+        }
+
+    </ul>
+
+    }
+
+    } @else {
+
+    <a [routerLink]="menu.route" class="d-block text-decoration-none text-white py-2">
+
+        {{ menu.label }}
+
+    </a>
+
+    }
+
+</li>

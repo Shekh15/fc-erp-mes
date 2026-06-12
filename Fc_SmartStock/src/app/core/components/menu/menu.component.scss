@@ -1,0 +1,23 @@
+.sidebar {
+//   width: 17rem;
+  overflow-y: auto;
+}
+
+.sidebar a {
+  padding-left: 12px;
+}
+
+.sidebar a:hover {
+  background: rgba(255,255,255,.1);
+}
+
+.sidebar button {
+  border: none;
+}
+
+.sidebar ul {
+  transition: all .3s ease;
+}
+
+
+

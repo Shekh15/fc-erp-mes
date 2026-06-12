@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, output, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -9,4 +9,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class HeaderComponent {
 
+  menuClicked = output<void>();
+
+  toggleMenu() {
+    this.menuClicked.emit();
+  }
 }

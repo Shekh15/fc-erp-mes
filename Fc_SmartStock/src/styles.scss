@@ -8,6 +8,14 @@ $primary: #ff5733;
 /* Font Awesome */
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
+@import '../node_modules/ngx-spinner/animations/ball-spin-clockwise.css';
+
+//  "./node_modules/ngx-spinner/animations/ball-spin-clockwise.css"
+
+#app-root{
+  height: 100vh;
+}
+
 html {
   font-size: 15px;
 }
@@ -52,3 +60,9 @@ button:disabled {
 .ngx-spinner-overlay {
   z-index: 999999 !important;
 }
+
+
+
+
+
+

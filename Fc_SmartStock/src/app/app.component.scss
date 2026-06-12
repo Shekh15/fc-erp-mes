@@ -14,12 +14,49 @@
   padding: 2rem 1rem;
 }
 .app-container {
-  width: 100%;
+  // width: 100%;
   // max-width: 920px;
-  min-height: 70vh;
+  // min-height: 70vh;
   background: transparent;
 }
 
 .container-center{
   overflow-x: hidden;
+}
+
+.sidebar-overlay {
+  position: fixed;
+
+  top: 72px;
+  left: 0;
+
+  width: 280px;
+  height: 100vh;
+
+  z-index: 1060;
+
+  background: #212529;
+
+  animation: slideIn .3s ease;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,.5);
+
+  z-index: 1050;
+}
+
+@keyframes slideIn {
+
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+
 }

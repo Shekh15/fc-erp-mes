@@ -1,0 +1,16 @@
+<div class="sidebar bg-dark text-white vh-100">
+
+  <ul class="list-unstyled p-2">
+
+    @for(item of menuItems; track item.label){
+
+      <app-recursivemenu
+        [menu]="item"
+        [level]="0">
+      </app-recursivemenu>
+
+    }
+
+  </ul>
+
+</div>

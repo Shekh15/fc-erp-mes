@@ -1,29 +1,63 @@
-
 <!-------------------------Header--------------------- -->
 @if (isAuthenticated) {
-  <app-header class="header h-10"></app-header>
+<app-header (menuClicked)="toggleSidebar()" class="header"></app-header>
 }
 <!-------------------------/Header----------------------->
 
-<div class="app-container h-70">
-    
-      <!-- <app-sales-record></app-sales-record> -->
-       <!-- <app-bill-generator></app-bill-generator> -->
-       <router-outlet></router-outlet>
+<div class="app-container">
 
+  <div class="row">
+
+    @if(!isMobile() && sidebarOpen()){
+
+    <div class="col-2">
+      <app-menu></app-menu>
+    </div>
+
+    }
+
+    <div [class]="(!isMobile() && sidebarOpen()) ? 'col-10' : 'col-12'">
+
+      <router-outlet></router-outlet>
+
+    </div>
+
+  </div>
+
+  @if(isMobile() && sidebarOpen()){
+
+  <div class="sidebar-overlay">
+
+    <app-menu></app-menu>
+
+  </div>
+
+  <div class="sidebar-backdrop" (click)="sidebarOpen.set(false)">
+  </div>
+
+  }
+
+
+
+  <!-- <app-sales-record></app-sales-record> -->
+  <!-- <app-bill-generator></app-bill-generator> -->
+
+  @if (isAuthenticated) {
+  <app-footer class="footer h-10"></app-footer>
+  }
 </div>
 
-@if (isAuthenticated) {
-  <app-footer class="footer h-20"></app-footer>
-}
 
 
+
+<!-- <button (click)="testSpinner()">Test Spinner</button> -->
 
 <ngx-spinner
   bdColor="rgba(0,0,0,0.4)"
-  size="large"
-  color="red"
-  type="square-jelly-box">
+  size="medium"
+  color="#ffffff"
+  type="ball-spin-clockwise">
 </ngx-spinner>
 
-<!-- <button (click)="testSpinner()">Test Spinner</button> -->
+
+

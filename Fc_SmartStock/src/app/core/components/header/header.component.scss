@@ -22,3 +22,15 @@
   background-color: black !important; /* Added !important to guarantee overwrite */
   border-radius: 8px;
 }
+
+.menu-icon {
+ font-size: 2.5rem;
+  margin: 1rem;
+  color: white;
+  cursor:pointer
+}
+
+.btn-togglemenu{
+  background: none;
+  border:none;
+}
