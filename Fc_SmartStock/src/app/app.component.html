@@ -10,13 +10,13 @@
 
     @if(!isMobile() && sidebarOpen()){
 
-    <div class="col-2">
+    <div class="col-3">
       <app-menu></app-menu>
     </div>
 
     }
 
-    <div [class]="(!isMobile() && sidebarOpen()) ? 'col-10' : 'col-12'">
+    <div [class]="(!isMobile() && sidebarOpen()) ? 'col-9' : 'col-12'">
 
       <router-outlet></router-outlet>
 

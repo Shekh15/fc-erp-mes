@@ -10,12 +10,11 @@ export interface Product {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductService {
-
   apiUrl = AppConfig.apiUrl;
-  
+
   private getProductsUrl = `${this.apiUrl}/products`;
 
   constructor(private http: HttpClient) {}
@@ -23,5 +22,12 @@ export class ProductService {
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.getProductsUrl);
   }
-}
 
+  adjustStock(data: any) {
+    return this.http.put(`${this.getProductsUrl}/adjust-stock`, data);
+  }
+
+  getStockList() {
+    return this.http.get(`${this.getProductsUrl}/stock`);
+  }
+}

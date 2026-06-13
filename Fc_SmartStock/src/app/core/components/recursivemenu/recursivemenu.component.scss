@@ -1,0 +1,10 @@
+.nav-link.active-nav {
+  background-color: black !important; /* Added !important to guarantee overwrite */
+  border-radius: 8px;
+}
+
+.nav-link {
+  font-weight: 800;
+  color: #fff;
+  font-size: 1.2rem;
+}

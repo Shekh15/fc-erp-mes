@@ -4,13 +4,12 @@ exports.getProducts = async (req, res, next) => {
   try {
     const products = await Product.getAll();
 
-    const formattedProducts = products.map(product => ({
+    const formattedProducts = products.map((product) => ({
       ...product,
-      price: product.price !== null ? Number(product.price) : 0
+      price: product.price !== null ? Number(product.price) : 0,
     }));
 
     res.json(formattedProducts);
-
   } catch (err) {
     next(err);
   }
@@ -32,5 +31,18 @@ exports.updateProduct = async (req, res, next) => {
     res.json(updated);
   } catch (err) {
     next(err);
+  }
+};
+
+// ================= STOCK LIST =================
+exports.getStockList = async (req, res) => {
+  try {
+    const data = await Product.getStockList();
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };

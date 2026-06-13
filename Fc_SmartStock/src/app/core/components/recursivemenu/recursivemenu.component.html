@@ -2,7 +2,7 @@
 
     @if(menu.children?.length){
 
-    <button class="btn btn-dark w-100 text-start d-flex justify-content-between" (click)="toggle()">
+    <button class="btn btn-dark w-100 text-start d-flex justify-content-between nav-link" (click)="toggle()">
 
         <span>
 
@@ -43,7 +43,7 @@
 
     } @else {
 
-    <a [routerLink]="menu.route" class="d-block text-decoration-none text-white py-2">
+    <a class="d-block text-decoration-none py-2 px-2 nav-link" [routerLink]="menu.route" routerLinkActive="active-nav">
 
         {{ menu.label }}
 

@@ -1,4 +1,5 @@
 const Ledger = require("./Ledger");
+const Stock = require("./Stock");
 const pool = require("../config/database");
 
 // ================= GET ALL =================
@@ -13,7 +14,6 @@ exports.getAll = async () => {
 
 // ================= GET BY ID =================
 exports.getById = async (id) => {
-  
   const [billRows] = await pool.query(
     `
     SELECT *
@@ -57,6 +57,18 @@ exports.getById = async (id) => {
   return bill;
 };
 
+exports.updatePdfPath = async (billId, pdfPath) => {
+  const [result] = await pool.query(
+    `
+    UPDATE Fc_bills
+    SET pdf_path = ?
+    WHERE id = ?
+    `,
+    [pdfPath, billId],
+  );
+
+  return result;
+};
 
 // ================= CREATE =================
 exports.create = async (data, userId) => {
@@ -134,6 +146,8 @@ exports.create = async (data, userId) => {
           userId,
         ],
       );
+
+      await Stock.decreaseStock(conn, item.productId, item.qty);
     }
 
     // Set original_bill_id = self
@@ -219,6 +233,15 @@ exports.update = async (originalBillId, data, userId) => {
     }
 
     const oldBill = rows[0];
+
+    const [oldItems] = await conn.query(
+      `SELECT product_id, quantity FROM Fc_bill_items WHERE bill_id = ?`,
+      [oldBill.id],
+    );
+
+    for (const item of oldItems) {
+      await Stock.increaseStock(conn, item.product_id, item.quantity);
+    }
 
     // Deactivate old version
     await conn.query(
@@ -342,6 +365,8 @@ exports.update = async (originalBillId, data, userId) => {
           userId,
         ],
       );
+
+      await Stock.decreaseStock(conn, item.productId, item.qty);
     }
 
     // New Ledger Debit
@@ -474,14 +499,13 @@ exports.reversePayment = async (ledgerId, userId) => {
 };
 
 exports.getBillHistory = async (billId) => {
-
   const [billRows] = await pool.query(
     `
     SELECT original_bill_id
     FROM Fc_bills
     WHERE id = ?
     `,
-    [billId]
+    [billId],
   );
 
   if (!billRows.length) {
@@ -503,14 +527,13 @@ exports.getBillHistory = async (billId) => {
     WHERE original_bill_id = ?
     ORDER BY version_number DESC
     `,
-    [originalBillId]
+    [originalBillId],
   );
 
   return historyRows;
 };
 
 exports.getVersionById = async (id) => {
-  
   const [billRows] = await pool.query(
     `
     SELECT *
@@ -551,4 +574,17 @@ exports.getVersionById = async (id) => {
   }));
 
   return bill;
+};
+
+exports.updatePdfPath = async (billId, pdfPath) => {
+  const [result] = await pool.query(
+    `
+    UPDATE Fc_bills
+    SET pdf_path = ?
+    WHERE id = ?
+    `,
+    [pdfPath, billId],
+  );
+
+  return result;
 };

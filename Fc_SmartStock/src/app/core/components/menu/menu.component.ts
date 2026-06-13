@@ -6,51 +6,28 @@ import { RecursivemenuComponent } from '../recursivemenu/recursivemenu.component
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule,RecursivemenuComponent],
+  imports: [CommonModule, RouterModule, RecursivemenuComponent],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent {
-
   menuItems = [
     {
-      label: 'Dashboard',
-      icon: 'bi bi-speedometer2',
-      route: '/dashboard',
+      label: 'Billing',
+      icon: 'bi bi-receipt-cutoff',
+      route: '/smartbilling',
     },
     {
-      label: 'Masters',
+      label: 'Products',
       icon: 'bi bi-database',
       children: [
         {
-          label: 'Products',
-          route: '/products',
+          label: 'Production Record',
+          route: '/production-entry',
         },
         {
-          label: 'Customers',
-          route: '/customers',
-        },
-        {
-          label: 'Production',
-          children: [
-            {
-              label: 'Daily Entry',
-              route: '/production/daily',
-            },
-            {
-              label: 'Reports',
-              children: [
-                {
-                  label: 'Monthly',
-                  route: '/production/reports/monthly',
-                },
-                {
-                  label: 'Yearly',
-                  route: '/production/reports/yearly',
-                },
-              ],
-            },
-          ],
+          label: 'Product Stock',
+          route: '/product-stock',
         },
       ],
     },

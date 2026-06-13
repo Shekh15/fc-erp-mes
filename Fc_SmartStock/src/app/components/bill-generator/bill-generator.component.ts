@@ -14,6 +14,7 @@ import { Product, ProductService } from '../../services/product.service';
 import { Client, ClientService } from '../../core/services/client.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { AppConfig } from '../../app.config';
 
 @Component({
   selector: 'app-bill-generator',
@@ -23,6 +24,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./bill-generator.component.scss'],
 })
 export class BillGeneratorComponent implements OnInit {
+  apiUrl = AppConfig.apiUrl;
   private router = inject(Router);
 
   products: Product[] = [];
@@ -224,16 +226,31 @@ export class BillGeneratorComponent implements OnInit {
 
     if (this.isEditMode && this.editingBillId) {
       this.billService.updateBill(this.editingBillId, formValue).subscribe({
-        next: () => {
+        next: (updatedBill) => {
           Swal.fire({
             icon: 'success',
             title: 'Bill Updated!',
-            text: 'The bill has been successfully Updated.',
-            confirmButtonColor: '#0f2b2e',
+            text: 'Do you want to download the updated invoice PDF?',
+            showDenyButton: true,
+            denyButtonColor: '#000000',
+            showCancelButton: true,
+            confirmButtonText: '<i class="bi bi-download me-2"></i></i>Download PDF',
+            confirmButtonColor: '#0f6871',
+            denyButtonText: '<i class="bi bi-eye-fill me-2"></i>View Invoice',
+            cancelButtonText: '<i class="bi bi-x-circle-fill me-2"></i>Close',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.open(
+                `${this.apiUrl}/bills/${updatedBill.id}/pdf`,
+                '_blank',
+              );
+            } else if (result.isDenied) {
+              this.router.navigate(['/bills/view', updatedBill.id]);
+            }
+
+            this.resetForm();
+            this.loadBillsFromServer();
           });
-          this.resetForm();
-          this.loadBillsFromServer();
-          console.log('After reset form:::', this.billForm);
         },
         error: () => {
           Swal.fire({
@@ -253,30 +270,35 @@ export class BillGeneratorComponent implements OnInit {
 
       this.billService.saveBill(newBill).subscribe({
         next: (savedBill) => {
-          // Swal.fire({
-          //   icon: 'success',
-          //   title: 'Bill Generated Successfully!',
-          // });
-
-          // this.resetForm();
-          // this.loadBillsFromServer();
-
           this.loadBillsFromServer();
 
           Swal.fire({
             icon: 'success',
             title: 'Bill Generated Successfully!',
+            text: 'Do you want to download the invoice PDF?',
+            showDenyButton: true,
             showCancelButton: true,
-            confirmButtonText: 'View Invoice',
+            confirmButtonText: 'Download PDF',
+            denyButtonText: 'View Invoice',
             cancelButtonText: 'Close',
           }).then((result) => {
             if (result.isConfirmed) {
+              window.open(`${this.apiUrl}/bills/${savedBill.id}/pdf`, '_blank');
+
+              this.resetForm();
+            } else if (result.isDenied) {
               this.router.navigate(['/bills/view', savedBill.id]);
             } else {
               this.resetForm();
             }
           });
-          
+        },
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong!',
+          });
         },
       });
     }

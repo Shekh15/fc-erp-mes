@@ -55,8 +55,8 @@
 }
 
 .items-container {
-  max-height: 50vh; /* fixed height */
-  border: 1px solid #c8d4da;
+  // max-height: 50vh; /* fixed height */
+  // border: 1px solid #c8d4da;
   border-radius: 4px;
   overflow-y: auto; /* vertical scroll */
   overflow-x: hidden;
@@ -225,3 +225,4 @@ button:not(:disabled):hover,
 .clickable-icon:hover {
   opacity: 0.85;
 }
+

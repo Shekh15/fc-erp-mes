@@ -7,12 +7,16 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./components/bill-generator/bill-generator.component').then(m => m.BillGeneratorComponent)
   },
   {
-    path: 'daily-production-record',
-    loadComponent: () => import('./components/daily-production-record/daily-production-record.component').then(m => m.DailyProductionRecordComponent)
+    path: 'production-entry',
+    loadComponent: () => import('./components/production-entry/production-entry.component').then(m => m.ProductionEntryComponent)
   },
   {
     path: 'bills/view/:id',
     loadComponent: () => import('./components/view-bill/view-bill.component').then(m=>m.ViewBillComponent)
+  },
+    {
+    path: 'product-stock',
+    loadComponent: () => import('./components/stock-management/stock-management.component').then(m=>m.StockManagementComponent)
   },
   {
     path: '',

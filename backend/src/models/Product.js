@@ -17,10 +17,8 @@ const pool = require("../config/database");
 
 // ================= GET ALL =================
 exports.getAll = async () => {
-  const [rows] = await pool.query(
-    `SELECT * FROM Fc_products ORDER BY id ASC`
-  );
-  console.log("Products:::",rows);
+  const [rows] = await pool.query(`SELECT * FROM Fc_products ORDER BY id ASC`);
+  console.log("Products:::", rows);
   return rows;
 };
 
@@ -28,14 +26,13 @@ exports.getAll = async () => {
 exports.create = async ({ name, price }) => {
   const [result] = await pool.query(
     `INSERT INTO Fc_products (name, price) VALUES (?, ?)`,
-    [name, price]
+    [name, price],
   );
 
   // MySQL doesn't support RETURNING *
-  const [rows] = await pool.query(
-    `SELECT * FROM Fc_products WHERE id = ?`,
-    [result.insertId]
-  );
+  const [rows] = await pool.query(`SELECT * FROM Fc_products WHERE id = ?`, [
+    result.insertId,
+  ]);
 
   return rows[0];
 };
@@ -50,16 +47,30 @@ exports.update = async (id, fields) => {
 
   const setQuery = keys.map((key) => `${key} = ?`).join(", ");
 
-  await pool.query(
-    `UPDATE Fc_products SET ${setQuery} WHERE id = ?`,
-    [...values, id]
-  );
+  await pool.query(`UPDATE Fc_products SET ${setQuery} WHERE id = ?`, [
+    ...values,
+    id,
+  ]);
 
-  const [rows] = await pool.query(
-    `SELECT * FROM Fc_products WHERE id = ?`,
-    [id]
-  );
+  const [rows] = await pool.query(`SELECT * FROM Fc_products WHERE id = ?`, [
+    id,
+  ]);
 
   return rows[0];
 };
 
+// ================= STOCK LIST =================
+exports.getStockList = async () => {
+  const [rows] = await pool.query(`
+    SELECT
+      id,
+      name,
+      current_stock,
+      category,
+      is_active
+    FROM Fc_products
+    ORDER BY name
+  `);
+
+  return rows;
+};
