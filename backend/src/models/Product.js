@@ -22,6 +22,17 @@ exports.getAll = async () => {
   return rows;
 };
 
+exports.getAvailableProducts = async () => {
+  const [rows] = await pool.query(`
+    SELECT *
+    FROM Fc_products
+    WHERE current_stock > 0
+    ORDER BY id ASC
+  `);
+
+  return rows;
+};
+
 // ================= CREATE =================
 exports.create = async ({ name, price }) => {
   const [result] = await pool.query(
@@ -37,27 +48,27 @@ exports.create = async ({ name, price }) => {
   return rows[0];
 };
 
-exports.update = async (id, fields) => {
-  const keys = Object.keys(fields);
-  const values = Object.values(fields);
+// exports.update = async (id, fields) => {
+//   const keys = Object.keys(fields);
+//   const values = Object.values(fields);
 
-  if (keys.length === 0) {
-    throw new Error("No fields provided for update");
-  }
+//   if (keys.length === 0) {
+//     throw new Error("No fields provided for update");
+//   }
 
-  const setQuery = keys.map((key) => `${key} = ?`).join(", ");
+//   const setQuery = keys.map((key) => `${key} = ?`).join(", ");
 
-  await pool.query(`UPDATE Fc_products SET ${setQuery} WHERE id = ?`, [
-    ...values,
-    id,
-  ]);
+//   await pool.query(`UPDATE Fc_products SET ${setQuery} WHERE id = ?`, [
+//     ...values,
+//     id,
+//   ]);
 
-  const [rows] = await pool.query(`SELECT * FROM Fc_products WHERE id = ?`, [
-    id,
-  ]);
+//   const [rows] = await pool.query(`SELECT * FROM Fc_products WHERE id = ?`, [
+//     id,
+//   ]);
 
-  return rows[0];
-};
+//   return rows[0];
+// };
 
 // ================= STOCK LIST =================
 exports.getStockList = async () => {
@@ -73,4 +84,81 @@ exports.getStockList = async () => {
   `);
 
   return rows;
+};
+
+// ================= ADJUST STOCK =================
+exports.adjustStock = async (data) => {
+  const conn = await pool.getConnection();
+
+  try {
+    await conn.beginTransaction();
+
+    // Verify product exists
+
+    console.log("Data for adjust::::", data)
+
+    const [productRows] = await conn.query(
+      `
+      SELECT *
+      FROM Fc_products
+      WHERE id = ?
+      FOR UPDATE
+      `,
+      [data.productId],
+    );
+
+    if (!productRows.length) {
+      throw new Error("Product not found");
+    }
+
+    const product = productRows[0];
+
+    // Save adjustment history
+
+    await conn.query(
+      `
+      INSERT INTO Fc_stock_adjustments
+      (
+        product_id,
+        old_stock,
+        new_stock,
+        reason,
+        created_by
+      )
+      VALUES
+      (?, ?, ?, ?, ?)
+      `,
+      [
+        data.productId,
+        product.current_stock,
+        data.newStock,
+        data.reason,
+        data.created_by || null,
+      ],
+    );
+
+    // Update product stock
+
+    await conn.query(
+      `
+      UPDATE Fc_products
+      SET current_stock = ?
+      WHERE id = ?
+      `,
+      [data.newStock, data.productId],
+    );
+
+    await conn.commit();
+
+    return {
+      success: true,
+      message: "Stock adjusted successfully",
+    };
+  } catch (error) {
+    await conn.rollback();
+
+    throw error;
+  } finally {
+    conn.release();
+  }
 };

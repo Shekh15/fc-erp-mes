@@ -15,19 +15,23 @@ export interface Product {
 export class ProductService {
   apiUrl = AppConfig.apiUrl;
 
-  private getProductsUrl = `${this.apiUrl}/products`;
+  private ProductsUrl = `${this.apiUrl}/products`;
 
   constructor(private http: HttpClient) {}
 
   getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.getProductsUrl);
+    return this.http.get<Product[]>(this.ProductsUrl);
+  }
+
+  getAvailableProducts():Observable<any>{
+    return this.http.get(`${this.ProductsUrl}/available`);
   }
 
   adjustStock(data: any) {
-    return this.http.put(`${this.getProductsUrl}/adjust-stock`, data);
+    return this.http.put(`${this.ProductsUrl}/adjust-stock`, data);
   }
 
   getStockList() {
-    return this.http.get(`${this.getProductsUrl}/stock`);
+    return this.http.get(`${this.ProductsUrl}/stock`);
   }
 }

@@ -10,12 +10,12 @@ import {
 import { ProductService } from '../../services/product.service';
 import { ProductionService } from '../../services/production.service';
 import Swal from 'sweetalert2';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-production-entry',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
   templateUrl: './production-entry.component.html',
   styleUrl: './production-entry.component.scss',
 })
@@ -25,7 +25,7 @@ export class ProductionEntryComponent implements OnInit {
   products: any[] = [];
   productions: any[] = [];
 
-  maxDate:any;
+  maxDate: any;
 
   constructor(
     private fb: FormBuilder,
@@ -34,8 +34,7 @@ export class ProductionEntryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
-    this.maxDate = new Date().toISOString().split('T')[0];
+    this.maxDate = this.getLocalDate();
 
     this.initializeForm();
 
@@ -48,18 +47,35 @@ export class ProductionEntryComponent implements OnInit {
     this.form = this.fb.group({
       id: [0],
 
-      production_date: [
-        new Date().toISOString().substring(0, 10),
-        Validators.required,
-      ],
+      production_date: ['', Validators.required],
 
       product_id: ['', Validators.required],
 
-      quantity: [0, [Validators.required, Validators.min(0.001)]],
+      quantity: [
+        null,
+        [
+          Validators.required,
+          Validators.min(0.001),
+          Validators.pattern(/^\d+(\.\d{1,3})?$/),
+        ],
+      ],
 
-      produced_packets: [0, [Validators.required, Validators.min(1)]],
+      produced_packets: [
+        null,
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.pattern(/^[0-9]+$/),
+        ],
+      ],
 
-      remarks: [''],
+      remarks: [
+        '',
+        [
+          Validators.maxLength(500),
+          Validators.pattern(/^[a-zA-Z0-9\s.,()\-]*$/),
+        ],
+      ],
     });
   }
 
@@ -90,6 +106,7 @@ export class ProductionEntryComponent implements OnInit {
 
   save() {
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
 
@@ -143,6 +160,8 @@ export class ProductionEntryComponent implements OnInit {
   }
 
   edit(row: any) {
+    console.log('Edited row:::', row);
+
     this.form.patchValue({
       id: row.id,
 
@@ -162,10 +181,7 @@ export class ProductionEntryComponent implements OnInit {
     this.form.reset({
       id: 0,
 
-      production_date: [
-        new Date().toISOString().substring(0, 10),
-        [Validators.required, this.noFutureDateValidator],
-      ],
+      production_date: this.getLocalDate(),
 
       product_id: '',
 
@@ -191,5 +207,17 @@ export class ProductionEntryComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
 
     return selectedDate > today ? { futureDate: true } : null;
+  }
+
+  getLocalDate(): string {
+    const today = new Date();
+
+    const year = today.getFullYear();
+
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+
+    const day = String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 }

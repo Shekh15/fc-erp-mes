@@ -15,6 +15,7 @@ import { Client, ClientService } from '../../core/services/client.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { AppConfig } from '../../app.config';
+import { atLeastOneQtyValidator } from '../../../shared/validators/qty-validator';
 
 @Component({
   selector: 'app-bill-generator',
@@ -115,11 +116,18 @@ export class BillGeneratorComponent implements OnInit {
       id: [''],
       clientId: [null, Validators.required],
       clientName: [''],
-      priceListId: [null],
+      priceListId: [null, Validators.required],
       inhouse: [true],
-      items: this.fb.array([]),
-      total: [2],
-      paidAmount: [0],
+      items: this.fb.array([], atLeastOneQtyValidator()),
+      total: [0],
+      paidAmount: [
+        0,
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.pattern(/^\d+(\.\d{1,2})?$/),
+        ],
+      ],
     });
 
     console.log('FORM STATE inside init:', this.billForm);
@@ -133,8 +141,15 @@ export class BillGeneratorComponent implements OnInit {
     return this.fb.group({
       productId: [product.id],
       productName: [product.name],
-      qty: [0],
-      unitPrice: [product.price],
+      qty: [
+        0,
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.pattern(/^[0-9]+$/),
+        ],
+      ],
+      unitPrice: [product.price, [Validators.required, Validators.min(0)]],
       total: [0],
     });
   }
@@ -143,10 +158,10 @@ export class BillGeneratorComponent implements OnInit {
   loadProducts() {
     this.items.clear();
 
-    this.productService.getProducts().subscribe({
-      next: (data: Product[]) => {
+    this.productService.getAvailableProducts().subscribe({
+      next: (data: any) => {
         this.products = data;
-        data.forEach((p) => this.items.push(this.createItem(p)));
+        data.forEach((p: any) => this.items.push(this.createItem(p)));
       },
       error: (err) => console.error('Error loading products:', err),
     });
@@ -214,7 +229,11 @@ export class BillGeneratorComponent implements OnInit {
   }
 
   saveOrUpdateBill() {
-    if (this.billForm.invalid) return;
+    if (this.billForm.invalid) {
+      this.billForm.markAllAsTouched();
+
+      return;
+    }
 
     const formValue = {
       ...this.billForm.value,
@@ -234,7 +253,8 @@ export class BillGeneratorComponent implements OnInit {
             showDenyButton: true,
             denyButtonColor: '#000000',
             showCancelButton: true,
-            confirmButtonText: '<i class="bi bi-download me-2"></i></i>Download PDF',
+            confirmButtonText:
+              '<i class="bi bi-download me-2"></i></i>Download PDF',
             confirmButtonColor: '#0f6871',
             denyButtonText: '<i class="bi bi-eye-fill me-2"></i>View Invoice',
             cancelButtonText: '<i class="bi bi-x-circle-fill me-2"></i>Close',
@@ -252,11 +272,11 @@ export class BillGeneratorComponent implements OnInit {
             this.loadBillsFromServer();
           });
         },
-        error: () => {
+        error: (err: any) => {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Something went wrong!',
+            text: err.error?.error || 'An unexpected error occurred',
           });
         },
       });
@@ -293,11 +313,11 @@ export class BillGeneratorComponent implements OnInit {
             }
           });
         },
-        error: () => {
+        error: (err) => {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Something went wrong!',
+            text: err.error?.error || 'An unexpected error occurred',
           });
         },
       });
@@ -427,11 +447,18 @@ export class BillGeneratorComponent implements OnInit {
         items.forEach((item: any) => {
           this.items.push(
             this.fb.group({
-              productId: item.product_id,
-              productName: item.productName,
-              qty: 0,
-              unitPrice: item.price,
-              total: 0,
+              productId: [item.product_id],
+              productName: [item.productName],
+              qty: [
+                0,
+                [
+                  Validators.required,
+                  Validators.min(0),
+                  Validators.pattern(/^[0-9]+$/),
+                ],
+              ],
+              unitPrice: [item.price, [Validators.required, Validators.min(0)]],
+              total: [0],
             }),
           );
         });

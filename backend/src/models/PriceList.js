@@ -6,7 +6,7 @@ exports.getAllActive = async () => {
     `SELECT id, name, description
      FROM Fc_price_lists
      WHERE is_active = 1
-     ORDER BY createdAt DESC`
+     ORDER BY createdAt DESC`,
   );
   return rows;
 };
@@ -19,7 +19,7 @@ exports.getByClient = async (clientId) => {
      JOIN Fc_price_lists pl ON c.price_list_id = pl.id
      WHERE c.id = ?
        AND pl.is_active = 1`,
-    [clientId]
+    [clientId],
   );
 
   return rows;
@@ -28,15 +28,21 @@ exports.getByClient = async (clientId) => {
 // ================= GET PRICE LIST ITEMS =================
 exports.getItems = async (priceListId) => {
   const [rows] = await pool.query(
-    `SELECT 
-        pli.product_id,
-        p.name AS productName,
-        pli.price
-     FROM Fc_price_list_products pli
-     JOIN Fc_products p ON pli.product_id = p.id
-     WHERE pli.price_list_id = ?
-       AND pli.is_active = 1`,
-    [priceListId]
+    `
+    SELECT
+      pli.product_id,
+      p.name AS productName,
+      pli.price,
+      p.current_stock
+    FROM Fc_price_list_products pli
+    INNER JOIN Fc_products p
+      ON pli.product_id = p.id
+    WHERE pli.price_list_id = ?
+      AND pli.is_active = 1
+      AND p.current_stock > 0
+    ORDER BY p.name
+    `,
+    [priceListId],
   );
 
   return rows;

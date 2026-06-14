@@ -61,6 +61,22 @@ button:disabled {
   z-index: 999999 !important;
 }
 
+.form-control:focus {
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border-color: rgb(24, 24, 24);
+  outline: 0;
+  box-shadow: 0 0 0 0.3rem rgba(68, 67, 67, 0.25);
+}
+
+.form-select:focus {
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border-color: rgb(24, 24, 24);
+  outline: 0;
+  box-shadow: 0 0 0 0.3rem rgba(68, 67, 67, 0.25);
+}
+
 .page-transition-animation {
   animation: fadeSlide .25s ease-in-out;
 }

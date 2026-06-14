@@ -1,17 +1,35 @@
 const pool = require("../config/database");
 const Stock = require("./Stock");
 
-
 // ================= GET ALL =================
 exports.getAll = async () => {
   const [rows] = await pool.query(
     `
     SELECT
-      pe.*,
+      pe.id,
+
+      DATE_FORMAT(
+        pe.production_date,
+        '%Y-%m-%d'
+      ) AS production_date,
+
+      pe.product_id,
+      pe.quantity,
+      pe.produced_packets,
+      pe.remarks,
+
+      pe.createdAt,
+      pe.created_by,
+      pe.updatedAt,
+      pe.updated_by,
+
       p.name AS product_name
+
     FROM Fc_production_entries pe
+
     INNER JOIN Fc_products p
       ON p.id = pe.product_id
+
     ORDER BY pe.production_date DESC,
              pe.id DESC
     `,

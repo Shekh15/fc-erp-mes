@@ -8,28 +8,45 @@ import { TwoDecimalDirective } from '../../core/directives/two-decimal.directive
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TwoDecimalDirective],
   templateUrl: './product-row.component.html',
-  styleUrl: './product-row.component.scss'
+  styleUrl: './product-row.component.scss',
 })
 export class ProductRowComponent implements OnInit {
   @Input() group!: FormGroup;
+  @Input() index!: any;
 
   ngOnInit() {
-    console.log("Formgroup in child component:::", this.group);
+    console.log('Formgroup in child component:::', this.group);
   }
 
-  get qty(): number { return this.group.get('qty')?.value || 0; }
-  get unitPrice(): number { return this.group.get('unitPrice')?.value || 0; }
-  get total(): number { return this.group.get('total')?.value || 0; }
+  get qty(): number {
+    return this.group.get('qty')?.value || 0;
+  }
+  get unitPrice(): number {
+    return this.group.get('unitPrice')?.value || 0;
+  }
+  get total(): number {
+    return this.group.get('total')?.value || 0;
+  }
 
-  incQty() { this.group.patchValue({ qty: this.qty + 1 }); }
-  decQty() { if (this.qty > 0) this.group.patchValue({ qty: this.qty - 1 }); }
+  incQty() {
+    const control = this.group.get('qty');
+    control?.markAsTouched();
+    this.group.patchValue({ qty: this.qty + 1 });
+  }
+  decQty() {
+    const control = this.group.get('qty');
+    control?.markAsTouched();
+    if (this.qty > 0) this.group.patchValue({ qty: this.qty - 1 });
+  }
 
   // 🔄 Completely Dynamic Math functions
   incPrice(step: number) {
     const currentPrice = this.unitPrice;
     const precision = this.getPrecisionMultiplier(step);
-    
-    const newPrice = (Math.round(currentPrice * precision) + Math.round(step * precision)) / precision;
+
+    const newPrice =
+      (Math.round(currentPrice * precision) + Math.round(step * precision)) /
+      precision;
     this.group.patchValue({ unitPrice: newPrice });
   }
 
@@ -37,8 +54,10 @@ export class ProductRowComponent implements OnInit {
     const currentPrice = this.unitPrice;
     if (currentPrice > 0) {
       const precision = this.getPrecisionMultiplier(step);
-      let newPrice = (Math.round(currentPrice * precision) - Math.round(step * precision)) / precision;
-      
+      let newPrice =
+        (Math.round(currentPrice * precision) - Math.round(step * precision)) /
+        precision;
+
       if (newPrice < 0) newPrice = 0;
       this.group.patchValue({ unitPrice: newPrice });
     }

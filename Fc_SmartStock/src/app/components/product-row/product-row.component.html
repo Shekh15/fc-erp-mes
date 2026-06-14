@@ -1,14 +1,17 @@
 <div class="row" [formGroup]="group">
 
+
+
+
     <!-- Product Name -->
     <div class="cell product-name p-2">
-        {{ group.get('productName')?.value }}
+        <span class="me-4 product-index">{{index+1}}</span> {{ group.get('productName')?.value }}
     </div>
 
     <!-- Quantity (Kept simple, changes only by 1) -->
     <div class="cell qty-cell p-2">
         <button class="step" step="1" type="button" (click)="decQty()">−</button>
-        <input class="value" formControlName="qty"/>
+        <input class="form-control value" formControlName="qty" />
         <button class="step" step="1" type="button" (click)="incQty()">+</button>
     </div>
 
@@ -19,7 +22,7 @@
         <!-- Pass the dynamic step value from the directive reference -->
         <button class="step" step="0.25" type="button" (click)="decPrice(priceInputRef.currentStep)">−</button>
 
-        <input class="value" formControlName="unitPrice" appTwoDecimal #priceInputRef="appTwoDecimal"
+        <input class="form-control value" formControlName="unitPrice" appTwoDecimal #priceInputRef="appTwoDecimal"
             placeholder="0.00" />
 
         <!-- Pass the dynamic step value from the directive reference -->

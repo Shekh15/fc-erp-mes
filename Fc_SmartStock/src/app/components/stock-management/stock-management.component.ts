@@ -42,9 +42,16 @@ export class StockManagementComponent implements OnInit {
 
       currentStock: [0],
 
-      newStock: [0, [Validators.required, Validators.min(0)]],
+      newStock: [
+        null,
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.pattern(/^[0-9]+$/),
+        ],
+      ],
 
-      reason: ['', Validators.required],
+      reason: ['', [Validators.maxLength(250)]],
     });
 
     this.loadStocks();

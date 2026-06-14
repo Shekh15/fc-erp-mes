@@ -24,10 +24,9 @@
               Product
             </label>
 
-            <input
-              class="form-control"
-              [value]="selectedProduct?.name"
-              readonly>
+            <div class="form-control bg-light">
+              {{ selectedProduct?.name }}
+            </div>
 
           </div>
 
@@ -37,10 +36,9 @@
               Current Stock
             </label>
 
-            <input
-              class="form-control"
-              formControlName="currentStock"
-              readonly>
+            <div class="form-control bg-light">
+              {{ stockForm.get('currentStock')?.value }}
+            </div>
 
           </div>
 
@@ -50,10 +48,29 @@
               New Stock
             </label>
 
-            <input
-              type="number"
-              class="form-control"
-              formControlName="newStock">
+            <input type="text" class="form-control" formControlName="newStock">
+
+            @if(stockForm.get('newStock')?.touched){
+
+            @if(stockForm.get('newStock')?.errors?.['required']){
+            <div class="text-danger mt-1">
+              Stock quantity is required.
+            </div>
+            }
+
+            @if(stockForm.get('newStock')?.errors?.['min']){
+            <div class="text-danger mt-1">
+              Stock cannot be negative.
+            </div>
+            }
+
+            @if(stockForm.get('newStock')?.errors?.['pattern']){
+            <div class="text-danger mt-1">
+              Only whole numbers are allowed.
+            </div>
+            }
+
+            }
 
           </div>
 
@@ -63,11 +80,14 @@
               Reason
             </label>
 
-            <textarea
-              rows="3"
-              class="form-control"
-              formControlName="reason">
+            <textarea rows="3" class="form-control" formControlName="reason">
             </textarea>
+            
+            @if(stockForm.get('reason')?.errors?.['maxlength']){
+            <div class="text-danger mt-1">
+              Reason cannot exceed 250 characters.
+            </div>
+            }
 
           </div>
 
@@ -79,20 +99,15 @@
 
     <div class="card-footer text-end">
 
-      <button
-        class="btn btn-secondary me-2"
-        (click)="goBack()">
+      <button class="btn btn-secondary me-2" (click)="goBack()">
 
-        Back
+        <i class="bi bi-caret-left-fill mx-1"></i>Back
 
       </button>
 
-      <button
-        class="btn btn-success"
-        [disabled]="stockForm.invalid"
-        (click)="saveStockAdjustment()">
+      <button class="btn btn-success" [disabled]="stockForm.invalid || stockForm.pristine" (click)="saveStockAdjustment()">
 
-        Save
+        Save <i class="bi bi-floppy-fill mx-1"></i>
 
       </button>
 
@@ -110,75 +125,74 @@
 
 <div class="container-fluid p-3 page-transition-animation">
 
-    <div class="card shadow-sm">
+  <div class="card shadow-sm">
 
-        <div class="card-header">
+    <div class="card-header">
 
-            <h4 class="mb-0">
-                Product Stock Management
-            </h4>
-
-        </div>
-
-        <div class="card-body">
-
-            <div class="row mb-3">
-
-                <div class="col-md-4">
-
-                    <input class="form-control" placeholder="Search Product..." [(ngModel)]="searchText"
-                        (input)="search()">
-
-                </div>
-
-            </div>
-
-            <table class="table table-hover table-bordered">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Product</th>
-                        <th>Stock</th>
-                        <th width="120">Action</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @for(stock of filteredStocks; track stock.id){
-
-                    <tr>
-
-                        <td>{{stock.name}}</td>
-
-
-                        <td>{{stock.current_stock}}</td>
-
-                        <td>
-
-                            <button class="btn btn-primary btn-sm" (click)="editStock(stock)">
-
-                                Edit
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                    }
-
-                </tbody>
-
-            </table>
-
-        </div>
+      <h4 class="mb-0">
+        Product Stock Management
+      </h4>
 
     </div>
+
+    <div class="card-body">
+
+      <div class="row mb-3">
+
+        <div class="col-md-4">
+
+          <input class="form-control" placeholder="Search Product..." [(ngModel)]="searchText" (input)="search()">
+
+        </div>
+
+      </div>
+
+      <table class="table table-hover table-bordered">
+
+        <thead>
+
+          <tr>
+
+            <th>Product</th>
+            <th>Stock</th>
+            <th width="120">Action</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          @for(stock of filteredStocks; track stock.id){
+
+          <tr>
+
+            <td>{{stock.name}}</td>
+
+
+            <td>{{stock.current_stock}}</td>
+
+            <td>
+
+              <button class="btn btn-secondary btn-sm" (click)="editStock(stock)">
+
+                <i class="bi bi-pencil-fill mx-2"></i>Edit
+
+              </button>
+
+            </td>
+
+          </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
 
 </div>
 
