@@ -23,6 +23,10 @@ export class ProductService {
     return this.http.get<Product[]>(this.ProductsUrl);
   }
 
+  addProduct(data: any): Observable<any> {
+    return this.http.post(this.ProductsUrl, data);
+  }
+
   getAvailableProducts():Observable<any>{
     return this.http.get(`${this.ProductsUrl}/available`);
   }

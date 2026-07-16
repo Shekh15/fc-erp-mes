@@ -31,5 +31,15 @@ export class MenuComponent {
         },
       ],
     },
+    {
+      label: 'Masters',
+      icon: 'bi bi-database',
+      children: [
+        {
+          label: 'Unit Master',
+          route: '/units',
+        }
+      ],
+    },
   ];
 }

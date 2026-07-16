@@ -1,0 +1,177 @@
+<div class="container-fluid p-3 page-transition-animation">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <h4 class="mb-0">
+                Units Master
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+
+            <form [formGroup]="form">
+
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Unit Code
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="unit_code" placeholder="KG">
+
+                        @if(form.get('ubit_code')?.touched){
+
+
+                        <div>
+
+                            @if(form.get('unit_code')?.errors?.['required']){
+                            <div class="text-danger mt-1">
+                                Unit code is required.
+                            </div>
+                            }
+
+                            @if(form.get('unit_code')?.errors?.['maxlength']){
+                            <div class="text-danger mt-1">
+                                Maximum 20 characters allowed.
+                            </div>
+                            }
+
+                        </div>
+
+                        }
+
+                    </div>
+
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            Unit Name
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="unit_name" placeholder="Kilogram">
+
+                        @if(form.get('unit_name')?.touched){
+
+                        <div>
+
+                            @if(form.get('unit_name')?.errors?.['required']){
+                            <div class="text-danger mt-1">
+                                Unit name is required.
+                            </div>
+
+                            }
+                            @if(form.get('unit_name')?.errors?.['maxlength']){
+                            <div class="text-danger mt-1">
+                                Maximum 100 characters allowed.
+                            </div>
+                            }
+
+                        </div>
+
+                        }
+
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <button type="button" class="btn btn-success me-2" [disabled]="form.invalid || form.pristine"
+                        (click)="save()">
+
+                        {{ form.value.id > 0 ? 'Update Unit' : 'Save Unit' }}
+
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" (click)="clear()">
+
+                        Clear
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mt-3">
+
+        <div class="card-header">
+            Available Units
+        </div>
+
+        <div class="card-body p-0">
+
+            <table class="table table-hover mb-0">
+
+                <thead>
+
+                    <tr>
+                        <th width="80">#</th>
+                        <th>Unit Code</th>
+                        <th>Unit Name</th>
+                        <th width="120">Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if(units.length > 0){
+
+                    @for(unit of units; track unit.id; let i = $index){
+
+                    <tr>
+
+                        <td>{{ i + 1 }}</td>
+
+                        <td>{{ unit.unit_code }}</td>
+
+                        <td>{{ unit.unit_name }}</td>
+
+                        <td>
+
+                            <button type="button" class="btn btn-sm btn-primary me-1" (click)="edit(unit)">
+
+                                <i class="bi bi-pencil-fill"></i>
+
+                            </button>
+
+                            <button type="button" class="btn btn-sm btn-danger" (click)="delete(unit.id)">
+
+                                <i class="bi bi-trash-fill"></i>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                    }
+
+                    } @else {
+
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No units found.
+                        </td>
+                    </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

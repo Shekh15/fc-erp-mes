@@ -21,9 +21,11 @@ export class ProductionService {
     return this.http.post(this.productionUrl, data);
   }
 
+  createBulk(data: any) {
+    return this.http.post(`${this.productionUrl}/production/bulk`, data);
+  }
+
   update(id: number, data: any) {
     return this.http.put(`${this.productionUrl}/${id}`, data);
   }
-
-  
 }

@@ -11,7 +11,25 @@
     <!-- Quantity (Kept simple, changes only by 1) -->
     <div class="cell qty-cell p-2">
         <button class="step" step="1" type="button" (click)="decQty()">−</button>
-        <input class="form-control value" formControlName="qty" />
+        <input type=text class="form-control value" formControlName="qty" />
+
+        
+
+        @if(group.get('qty')?.invalid &&
+        (group.get('qty')?.touched || group.get('qty')?.dirty)){
+
+        @if(group.get('qty')?.errors?.['required']){
+        <div class="text-danger small qty-validator">
+            Quantity is required.
+        </div>
+        }
+
+        @if(group.get('qty')?.errors?.['pattern']){
+        <div class="text-danger small qty-validator">
+            Only whole numbers allowed.
+        </div>
+        }
+        }
         <button class="step" step="1" type="button" (click)="incQty()">+</button>
     </div>
 

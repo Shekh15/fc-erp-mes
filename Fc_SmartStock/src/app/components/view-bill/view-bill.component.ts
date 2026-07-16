@@ -19,6 +19,8 @@ export class ViewBillComponent {
 
   bill: any;
   history: any[] = [];
+  grandTotal: number = 0;
+  remainingBalance: number = 0;
 
   constructor(private billService: BillService) {}
 
@@ -36,6 +38,8 @@ export class ViewBillComponent {
     this.billService.getBillById(id).subscribe({
       next: (res: any) => {
         this.bill = Array.isArray(res) ? res[0] : res;
+
+        this.calculateGrandTotal();
         console.log('Bill Data:::', this.bill);
       },
       error: () => {
@@ -63,6 +67,7 @@ export class ViewBillComponent {
     this.billService.getBillVersion(id).subscribe({
       next: (res: any) => {
         this.bill = res;
+        this.calculateGrandTotal();
         console.log('Bill Version Data:::', this.bill);
       },
       error: () => {
@@ -85,7 +90,6 @@ export class ViewBillComponent {
       return;
     }
 
-
     this.billService.getBillHistory(this.id).subscribe({
       next: (res: any) => {
         this.history = res;
@@ -101,12 +105,18 @@ export class ViewBillComponent {
     });
   }
 
+  calculateGrandTotal() {
+    this.grandTotal =
+      Number(this.bill.total) + Number(this.bill.previousAmount);
+
+      this.remainingBalance = this.grandTotal - (Number(this.bill.paidAmount) || 0);
+  }
+
   goBack(): void {
     this.router.navigate(['/smartbilling']);
   }
 
   downloadBillPdf(id: string) {
-
     if (!id) {
       Swal.fire({
         icon: 'error',

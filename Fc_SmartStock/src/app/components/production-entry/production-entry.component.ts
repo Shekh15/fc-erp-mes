@@ -1,21 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
   AbstractControl,
   ValidationErrors,
+  FormsModule,
 } from '@angular/forms';
-import { ProductService } from '../../services/product.service';
-import { ProductionService } from '../../services/production.service';
-import Swal from 'sweetalert2';
+
 import { DatePipe, DecimalPipe } from '@angular/common';
+
+import Swal from 'sweetalert2';
+
+import { ProductService } from '../../services/product.service';
+import { ProductionDashboardService } from '../../services/production-dashboard.service';
+import { ProductionService } from '../../services/production.service';
 
 @Component({
   selector: 'app-production-entry',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
+  imports: [ReactiveFormsModule, FormsModule, DatePipe, DecimalPipe],
   templateUrl: './production-entry.component.html',
   styleUrl: './production-entry.component.scss',
 })
@@ -23,15 +29,42 @@ export class ProductionEntryComponent implements OnInit {
   form!: FormGroup;
 
   products: any[] = [];
+
   productions: any[] = [];
 
-  maxDate: any;
+  tableProducts: any[] = [];
+
+  pivotData: any[] = [];
+
+  maxDate = '';
+
+  isEditMode = false;
+
+  editingDate = '';
+
+  viewMode: 'entry' | 'dashboard' = 'entry';
+
+  dashboard:any = {
+    totalWork: 0,
+    totalPackets: 0,
+    totalRevenue: 0,
+    totalProfit: 0,
+    products: []
+};
+
+  fromDate = this.getLocalDate();
+  toDate = this.getLocalDate();
 
   constructor(
     private fb: FormBuilder,
-    private productionService: ProductionService,
     private productService: ProductService,
+    private productionService: ProductionService,
+    private productionDashboardService: ProductionDashboardService,
   ) {}
+
+  get items(): FormArray {
+    return this.form.get('items') as FormArray;
+  }
 
   ngOnInit(): void {
     this.maxDate = this.getLocalDate();
@@ -43,30 +76,15 @@ export class ProductionEntryComponent implements OnInit {
     this.loadProductions();
   }
 
+  //-------------------------------------------------
+  // FORM
+  //-------------------------------------------------
+
   initializeForm() {
     this.form = this.fb.group({
-      id: [0],
-
-      production_date: ['', Validators.required],
-
-      product_id: ['', Validators.required],
-
-      quantity: [
-        null,
-        [
-          Validators.required,
-          Validators.min(0.001),
-          Validators.pattern(/^\d+(\.\d{1,3})?$/),
-        ],
-      ],
-
-      produced_packets: [
-        null,
-        [
-          Validators.required,
-          Validators.min(1),
-          Validators.pattern(/^[0-9]+$/),
-        ],
+      production_date: [
+        this.getLocalDate(),
+        [Validators.required, this.noFutureDateValidator.bind(this)],
       ],
 
       remarks: [
@@ -76,148 +94,307 @@ export class ProductionEntryComponent implements OnInit {
           Validators.pattern(/^[a-zA-Z0-9\s.,()\-]*$/),
         ],
       ],
+
+      items: this.fb.array([]),
+    });
+  }
+  //-------------------------------------------------
+  // LOAD PRODUCTS
+  //-------------------------------------------------
+
+  loadProducts() {
+    this.productService.getProducts().subscribe({
+      next: (products: any[]) => {
+        this.products = products;
+
+        this.items.clear();
+
+        products.forEach((product) => {
+          this.items.push(this.createItem(product));
+        });
+      },
     });
   }
 
-  //This method will load all products and push to form array
-  loadProducts() {
-    this.productService.getProducts().subscribe({
-      next: (res: any) => {
-        this.products = res;
+  loadDashboard() {
+    this.productionDashboardService
+      .getDashboard(this.fromDate, this.toDate)
+      .subscribe({
+        next: (res: any) => {
+          this.dashboard = res.data;
+        },
+        error: console.error,
+      });
+  }
+
+  //-------------------------------------------------
+  // SAVE
+  //-------------------------------------------------
+
+  save() {
+    const rows = this.items.controls
+      .filter((control) => {
+        const qty = Number(control.get('quantity')?.value || 0);
+
+        const packets = Number(control.get('produced_packets')?.value || 0);
+
+        return qty > 0 || packets > 0;
+      })
+      .map((control) => control.value); // <-- THIS IS THE IMPORTANT PART
+
+    if (rows.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Nothing to save',
+        text: 'Enter production for at least one product.',
+      });
+
+      return;
+    }
+
+    const invalid = this.items.controls.find((control) => {
+      const qty = Number(control.get('quantity')?.value || 0);
+
+      const packets = Number(control.get('produced_packets')?.value || 0);
+
+      return (qty > 0 || packets > 0) && control.invalid;
+    });
+
+    if (invalid) {
+      invalid.markAllAsTouched();
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Entry',
+        text: 'Enter both Quantity and Packets.',
+      });
+
+      return;
+    }
+
+    const payload = {
+      production_date: this.form.value.production_date,
+      remarks: this.form.value.remarks,
+      items: rows,
+    };
+
+    console.log(payload);
+
+    this.productionService.createBulk(payload).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Saved',
+          text: 'Production saved successfully.',
+        });
+
+        this.loadProductions();
+
+        this.clear();
       },
 
       error: (err: any) => {
-        console.error(err);
+        console.log(err);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.error?.message || 'Something went wrong',
+        });
       },
     });
   }
+
+  private createItem(product: any): FormGroup {
+    return this.fb.group(
+      {
+        product_id: [product.id],
+
+        product_name: [product.name],
+
+        quantity: [
+          0,
+          [Validators.min(0), Validators.pattern(/^\d+(\.\d{1,3})?$/)],
+        ],
+
+        produced_packets: [
+          0,
+          [Validators.min(0), Validators.pattern(/^[0-9]+$/)],
+        ],
+      },
+      {
+        validators: this.productionRowValidator,
+      },
+    );
+  }
+
+  productionRowValidator(control: AbstractControl): ValidationErrors | null {
+    const qty = Number(control.get('quantity')?.value || 0);
+
+    const packets = Number(control.get('produced_packets')?.value || 0);
+
+    if (qty === 0 && packets === 0) {
+      return null;
+    }
+
+    if (qty <= 0) {
+      return {
+        quantityRequired: true,
+      };
+    }
+
+    if (packets <= 0) {
+      return {
+        packetsRequired: true,
+      };
+    }
+
+    return null;
+  }
+
+  clear() {
+    this.form.patchValue({
+      production_date: this.getLocalDate(),
+
+      remarks: '',
+    });
+
+    this.items.controls.forEach((control) => {
+      control.patchValue({
+        quantity: 0,
+
+        produced_packets: 0,
+      });
+    });
+  }
+
+  //-------------------------------------------------
+  // LOAD TABLE
+  //-------------------------------------------------
 
   loadProductions() {
     this.productionService.getAll().subscribe({
       next: (res: any) => {
         this.productions = res.data;
+
+        this.buildPivotTable();
       },
 
-      error: (err) => {
-        console.error(err);
-      },
+      error: console.error,
     });
   }
 
-  save() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const data = this.form.value;
-
-    if (data.id && data.id > 0) {
-      this.productionService.update(data.id, data).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Updated',
-            text: 'Production updated successfully',
-          });
-
-          this.loadProductions();
-
-          this.clear();
-        },
-
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: err.error.message,
-          });
-        },
-      });
-    } else {
-      this.productionService.create(data).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Saved',
-            text: 'Production saved successfully',
-          });
-
-          this.loadProductions();
-
-          this.clear();
-        },
-
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: err.error.message,
-          });
-        },
-      });
-    }
+  showEntry() {
+    this.viewMode = 'entry';
   }
 
-  edit(row: any) {
-    console.log('Edited row:::', row);
+  showDashboard() {
+    this.viewMode = 'dashboard';
 
+    this.loadDashboard();
+  }
+
+  buildPivotTable() {
+    const grouped: any = {};
+
+    this.tableProducts = [];
+
+    this.productions.forEach((item: any) => {
+      // Build dynamic product headers
+
+      if (!this.tableProducts.find((p) => p.id === item.product_id)) {
+        this.tableProducts.push({
+          id: item.product_id,
+
+          name: item.product_name,
+        });
+      }
+
+      // Group by production date
+
+      if (!grouped[item.production_date]) {
+        grouped[item.production_date] = {
+          date: item.production_date,
+
+          remarks: item.remarks,
+
+          rows: {},
+        };
+      }
+
+      grouped[item.production_date].rows[item.product_id] = {
+        quantity: item.quantity,
+
+        packets: item.produced_packets,
+      };
+    });
+
+    this.pivotData = Object.values(grouped);
+  }
+
+  editProduction(day: any) {
+    // Reset all values first
+    this.isEditMode = true;
+
+    this.editingDate = day.date;
+
+    this.clear();
+
+    // Load batch details
     this.form.patchValue({
-      id: row.id,
+      production_date: day.date,
 
-      production_date: row.production_date,
+      remarks: day.remarks,
+    });
 
-      product_id: row.product_id,
+    // Fill every product
+    day.items.forEach((item: any) => {
+      const row = this.items.controls.find(
+        (control) => control.get('product_id')?.value === item.product_id,
+      );
 
-      quantity: row.quantity,
+      if (row) {
+        row.patchValue({
+          quantity: item.quantity,
 
-      produced_packets: row.produced_packets,
+          produced_packets: item.produced_packets,
+        });
+      }
+    });
 
-      remarks: row.remarks,
+    this.form.markAsDirty();
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
     });
   }
 
-  clear() {
-    this.form.reset({
-      id: 0,
-
-      production_date: this.getLocalDate(),
-
-      product_id: '',
-
-      quantity: 0,
-
-      produced_packets: 0,
-
-      remarks: '',
-    });
-  }
+  //-------------------------------------------------
+  // VALIDATOR
+  //-------------------------------------------------
 
   noFutureDateValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) {
-      return null;
-    }
+    if (!control.value) return null;
 
-    const [year, month, day] = control.value.split('-').map(Number);
-
-    const selectedDate = new Date(year, month - 1, day);
+    const selected = new Date(control.value);
 
     const today = new Date();
 
     today.setHours(0, 0, 0, 0);
 
-    return selectedDate > today ? { futureDate: true } : null;
+    selected.setHours(0, 0, 0, 0);
+
+    return selected > today ? { futureDate: true } : null;
   }
+
+  //-------------------------------------------------
+  // DATE
+  //-------------------------------------------------
 
   getLocalDate(): string {
     const today = new Date();
 
-    const year = today.getFullYear();
-
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-
-    const day = String(today.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
+    return today.toISOString().substring(0, 10);
   }
 }

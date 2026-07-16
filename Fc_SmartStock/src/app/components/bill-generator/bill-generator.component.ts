@@ -145,7 +145,6 @@ export class BillGeneratorComponent implements OnInit {
         0,
         [
           Validators.required,
-          Validators.min(0),
           Validators.pattern(/^[0-9]+$/),
         ],
       ],

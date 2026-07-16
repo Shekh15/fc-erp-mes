@@ -19,6 +19,10 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./components/stock-management/stock-management.component').then(m=>m.StockManagementComponent)
   },
   {
+    path: 'units',
+    loadComponent: () => import('./master/unit-master/unit-master.component').then(m=>m.UnitMasterComponent)
+  },
+  {
     path: '',
     redirectTo: 'smartbilling',
     pathMatch: 'full'

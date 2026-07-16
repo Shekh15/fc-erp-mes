@@ -48,22 +48,15 @@ export class TwoDecimalDirective implements OnInit {
 
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
+    // Block negative sign
+    if (event.key === '-') {
+      event.preventDefault();
+      return;
+    }
+
     if (this.specialKeys.indexOf(event.key) !== -1) {
       setTimeout(() => this.updateStepSize());
       return;
-    }
-    const current: string = this.el.nativeElement.value;
-    const position = this.el.nativeElement.selectionStart ?? 0;
-    const next: string = [
-      current.slice(0, position),
-      event.key,
-      current.slice(position),
-    ].join('');
-
-    if (next && !String(next).match(this.regex)) {
-      event.preventDefault();
-    } else {
-      this.updateStepSize(next);
     }
   }
 
@@ -74,17 +67,36 @@ export class TwoDecimalDirective implements OnInit {
 
   @HostListener('paste')
   onPaste() {
-    setTimeout(() => this.updateStepSize());
+    setTimeout(() => {
+      const value = parseFloat(this.el.nativeElement.value);
+
+      if (!isNaN(value) && value < 0) {
+        this.el.nativeElement.value = '0.00';
+
+        this.ngControl?.control?.setValue(0, {
+          emitEvent: true,
+        });
+      }
+
+      this.updateStepSize();
+    });
   }
 
   private formatAndSetStep(): void {
     const value = this.el.nativeElement.value;
     if (value && !isNaN(parseFloat(value))) {
-      const numericValue = parseFloat(value);
+      let numericValue = parseFloat(value);
+
+      if (numericValue < 0) {
+        numericValue = 0;
+      }
+
       this.el.nativeElement.value = numericValue.toFixed(2);
 
       if (this.ngControl && this.ngControl.control) {
-        this.ngControl.control.setValue(numericValue, { emitEvent: true });
+        this.ngControl.control.setValue(numericValue, {
+          emitEvent: true,
+        });
       }
     }
     this.updateStepSize();

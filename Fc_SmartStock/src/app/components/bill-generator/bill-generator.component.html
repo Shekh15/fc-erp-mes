@@ -1,5 +1,5 @@
 <div class="row page-transition-animation">
-    <div class="col-md-12 col-sm-12">
+    <div class="col-lg-8 col-md-12 col-sm-12">
         <div class="container-billscreen m-2">
             <div class="card">
                 <div class="card-header">Smart Billing</div>
@@ -66,7 +66,7 @@
                         @if(items.errors?.['noQuantityEntered'] &&
                         (items.touched || billForm.touched)) {
 
-                        <div class="text-danger mt-2">
+                        <div class="text-danger fw-bold small mt-2">
                             Please enter quantity for at least one product.
                         </div>
 
@@ -129,7 +129,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-sm-12">
+    <div class="col-lg-4 col-md-12 col-sm-12">
         <div class="recent m-2">
             <h3>Recently Generated Bills</h3>
             <div class="bills">

@@ -1,18 +1,40 @@
 <div class="container-fluid p-3 page-transition-animation">
 
     <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
 
-        <div class="card-header">
             <h4 class="mb-0">
-                Production Entry
+                Production
             </h4>
+
+            <div>
+
+                <button class="btn btn-sm me-2" [class.btn-primary]="viewMode==='entry'"
+                    [class.btn-outline-primary]="viewMode!=='entry'" (click)="showEntry()">
+
+                    Production Entry
+
+                </button>
+
+                <button class="btn btn-sm" [class.btn-success]="viewMode==='dashboard'"
+                    [class.btn-outline-success]="viewMode!=='dashboard'" (click)="showDashboard()">
+
+                    Dashboard
+
+                </button>
+
+            </div>
+
         </div>
 
         <div class="card-body">
 
+            @if(viewMode==='entry'){
+
+
             <form [formGroup]="form">
 
-                <div class="row g-3">
+                <div class="row mb-3">
 
                     <div class="col-md-3">
 
@@ -23,133 +45,20 @@
                         <input type="date" class="form-control" formControlName="production_date" [max]="maxDate">
 
                         @if(form.get('production_date')?.touched &&
-                        form.get('production_date')?.errors?.['futureDate']) {
+                        form.get('production_date')?.errors?.['required']){
 
-                        <div class="text-danger mt-1">
+                        <div class="text-danger small">
+                            Production date is required.
+                        </div>
+
+                        }
+
+                        @if(form.get('production_date')?.touched &&
+                        form.get('production_date')?.errors?.['futureDate']){
+
+                        <div class="text-danger small">
                             Future production date is not allowed.
                         </div>
-                        }
-
-                    </div>
-
-                    <div class="col-md-5">
-
-                        <label class="form-label">
-                            Product
-                        </label>
-
-                        <select class="form-select" formControlName="product_id">
-
-                            <option value="">
-                                Select Product
-                            </option>
-
-                            @for(product of products; track product.id){
-
-                            <option [value]="product.id">
-                                {{product.name}}
-                            </option>
-
-                            }
-
-                        </select>
-
-                        @if(form.get('product_id')?.touched &&
-                        form.get('product_id')?.errors?.['required']){
-
-                        <div class="text-danger mt-1">
-                            Please select a product.
-                        </div>
-
-                        }
-
-                    </div>
-
-                    <div class="col-md-2">
-
-                        <label class="form-label">
-                            Raw Material Qty
-                        </label>
-
-                        <input type="number" class="form-control" formControlName="quantity" step="0.001">
-
-                        @if(form.get('quantity')?.touched){
-
-                        @if(form.get('quantity')?.errors?.['required']){
-                        <div class="text-danger mt-1">
-                            Quantity is required.
-                        </div>
-                        }
-
-                        @if(form.get('quantity')?.errors?.['min']){
-                        <div class="text-danger mt-1">
-                            Quantity must be greater than 0.
-                        </div>
-                        }
-
-                        @if(form.get('quantity')?.errors?.['pattern']){
-                        <div class="text-danger mt-1">
-                            Maximum 3 decimal places allowed.
-                        </div>
-                        }
-
-                        }
-
-                    </div>
-
-                    <div class="col-md-2">
-
-                        <label class="form-label">
-                            Packets
-                        </label>
-
-                        <input type="number" class="form-control" formControlName="produced_packets">
-
-                        @if(form.get('produced_packets')?.touched){
-
-                        @if(form.get('produced_packets')?.errors?.['required']){
-                        <div class="text-danger mt-1">
-                            Packet count is required.
-                        </div>
-                        }
-
-                        @if(form.get('produced_packets')?.errors?.['min']){
-                        <div class="text-danger mt-1">
-                            Packets must be greater than zero.
-                        </div>
-                        }
-
-                        @if(form.get('produced_packets')?.errors?.['pattern']){
-                        <div class="text-danger mt-1">
-                            Only whole numbers are allowed.
-                        </div>
-                        }
-
-                        }
-
-                    </div>
-
-                    <div class="col-12">
-
-                        <label class="form-label">
-                            Remarks
-                        </label>
-
-                        <textarea rows="2" class="form-control" formControlName="remarks"></textarea>
-
-                        @if(form.get('remarks')?.touched){
-
-                        @if(form.get('remarks')?.errors?.['maxlength']){
-                        <div class="text-danger mt-1">
-                            Maximum 500 characters allowed.
-                        </div>
-                        }
-
-                        @if(form.get('remarks')?.errors?.['pattern']){
-                        <div class="text-danger mt-1">
-                            Invalid characters entered.
-                        </div>
-                        }
 
                         }
 
@@ -157,12 +66,170 @@
 
                 </div>
 
+                <div formArrayName="items">
+
+                    <table class="table table-bordered table-hover align-middle">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th width="35%">Product</th>
+
+                                <th width="20%">Raw Qty</th>
+
+                                <th width="15%">Packets</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @for(item of items.controls; track $index; let i = $index){
+
+                            <tr [formGroupName]="i">
+
+                                <td>
+
+                                    <strong>
+
+                                        {{ item.get('product_name')?.value }}
+
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    <input type="number" step="0.001" class="form-control" formControlName="quantity">
+
+                                    @if(item.invalid &&
+                                    (item.touched || item.dirty)){
+
+                                    @if(item.errors?.['quantityRequired']){
+
+                                    <div class="text-danger small">
+                                        Quantity is required.
+                                    </div>
+
+                                    }
+
+                                    }
+
+                                    @if(item.get('quantity')?.touched){
+
+                                    @if(item.get('quantity')?.errors?.['pattern']){
+
+                                    <div class="text-danger small">
+                                        Maximum 3 decimal places allowed.
+                                    </div>
+
+                                    }
+
+                                    @if(item.get('quantity')?.errors?.['min']){
+
+                                    <div class="text-danger small">
+                                        Quantity cannot be negative.
+                                    </div>
+
+                                    }
+
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <input type="number" class="form-control" formControlName="produced_packets">
+
+                                    @if(item.invalid &&
+                                    (item.touched || item.dirty)){
+
+                                    @if(item.errors?.['packetsRequired']){
+
+                                    <div class="text-danger small">
+                                        Packets are required.
+                                    </div>
+
+                                    }
+
+                                    }
+
+                                    @if(item.get('produced_packets')?.touched){
+
+                                    @if(item.get('produced_packets')?.errors?.['pattern']){
+
+                                    <div class="text-danger small">
+                                        Whole numbers only.
+                                    </div>
+
+                                    }
+
+                                    @if(item.get('produced_packets')?.errors?.['min']){
+
+                                    <div class="text-danger small">
+                                        Packets cannot be negative.
+                                    </div>
+
+                                    }
+
+                                    }
+
+                                </td>
+
+                            </tr>
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+
+
+                </div>
+
                 <div class="mt-3">
 
-                    <button type="button" [disabled]="form.invalid || form.pristine" class="btn btn-success me-2" (click)="save()">
+                    <label class="form-label">
 
-                        Save Production
+                        Remarks
 
+                    </label>
+
+                    <textarea rows="3" class="form-control" formControlName="remarks">
+
+    </textarea>
+
+                    @if(form.get('remarks')?.touched &&
+                    form.get('remarks')?.errors?.['maxlength']){
+
+                    <div class="text-danger small">
+
+                        Maximum 500 characters allowed.
+
+                    </div>
+
+                    }
+
+                    @if(form.get('remarks')?.touched &&
+                    form.get('remarks')?.errors?.['pattern']){
+
+                    <div class="text-danger small">
+
+                        Invalid characters entered.
+
+                    </div>
+
+                    }
+
+                </div>
+
+                <div class="mt-3">
+
+                    <button type="button" class="btn btn-success me-2" [disabled]="form.pristine" (click)="save()">
+                        {{ isEditMode ? 'Update Production' : 'Save Production' }}
                     </button>
 
                     <button type="button" class="btn btn-secondary" (click)="clear()">
@@ -175,63 +242,420 @@
 
             </form>
 
+            }
+            @if(viewMode === 'dashboard'){
+
+            <div class="card shadow-sm mt-3">
+
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                    <h5 class="mb-0">
+
+                        Production Dashboard
+
+                    </h5>
+
+                    <div class="d-flex gap-2">
+
+                        <button class="btn btn-outline-primary btn-sm" type="button" (click)="loadDashboard()">
+
+                            Refresh
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    <!-- Filters -->
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+
+                                From Date
+
+                            </label>
+
+                            <input type="date" class="form-control" [(ngModel)]="fromDate"
+                                [ngModelOptions]="{standalone:true}">
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+
+                                To Date
+
+                            </label>
+
+                            <input type="date" class="form-control" [(ngModel)]="toDate"
+                                [ngModelOptions]="{standalone:true}">
+
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-end">
+
+                            <button class="btn btn-success w-100" type="button" (click)="loadDashboard()">
+
+                                Search
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Summary Cards -->
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-md-3">
+
+                            <div class="card border-primary">
+
+                                <div class="card-body text-center">
+
+                                    <small class="text-muted">
+
+                                        Total Work
+
+                                    </small>
+
+                                    <h3 class="mt-2">
+
+                                        {{ dashboard.totalWork | number:'1.3-3' }}
+
+                                        <small>Kg</small>
+
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="card border-success">
+
+                                <div class="card-body text-center">
+
+                                    <small class="text-muted">
+
+                                        Total Packets
+
+                                    </small>
+
+                                    <h3 class="mt-2">
+
+                                        {{ dashboard.totalPackets }}
+
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="card border-warning">
+
+                                <div class="card-body text-center">
+
+                                    <small class="text-muted">
+
+                                        Revenue
+
+                                    </small>
+
+                                    <h3 class="mt-2">
+
+                                        ₹ {{ dashboard.totalRevenue | number:'1.2-2' }}
+
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="card border-danger">
+
+                                <div class="card-body text-center">
+
+                                    <small class="text-muted">
+
+                                        Profit
+
+                                    </small>
+
+                                    <h3 class="mt-2">
+
+                                        ₹ {{ dashboard.totalProfit | number:'1.2-2' }}
+
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Product Wise Table -->
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-hover align-middle">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>#</th>
+
+                                    <th>Product</th>
+
+                                    <th>Batch Size</th>
+                                    <th>Packets / Batch</th>
+
+                                    <th>Total Work (Kg)</th>
+
+                                    <th>Total Packets</th>
+
+                                    <th>Rate / Kg</th>
+
+                                    <th>Amount</th>
+
+                                    <th>Price / Packet</th>
+
+                                    <th>Revenue</th>
+
+                                    <th>Profit</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @if(dashboard.products){
+
+                                @for(row of dashboard?.products; track row?.product_id; let i = $index){
+
+                                <tr>
+
+                                    <td>
+
+                                        {{ i + 1 }}
+
+                                    </td>
+
+                                    <td>
+
+                                        {{ row?.product_name }}
+
+                                    </td>
+
+                                    <td>
+
+                                        {{ row.batch_size }}
+
+                                    </td>
+
+                                    <td>
+
+                                        {{ row.packets_per_batch }}
+
+                                    </td>
+
+                                    <td>
+
+                                        {{ row.total_work | number:'1.3-3' }}
+
+                                    </td>
+
+                                    <td>
+
+                                        {{ row.total_packets }}
+
+                                    </td>
+
+                                    <td>
+
+                                        ₹ {{ row.rate_per_kg }}
+
+                                    </td>
+
+                                    <td>
+
+                                        ₹ {{ row.amount | number:'1.2-2' }}
+
+                                    </td>
+
+                                    <td>
+
+                                        ₹ {{ row.price }}
+
+                                    </td>
+
+                                    <td>
+
+                                        ₹ {{ row.revenue | number:'1.2-2' }}
+
+                                    </td>
+
+                                    <td>
+
+                                        ₹ {{ row.profit | number:'1.2-2' }}
+
+                                    </td>
+
+                                </tr>
+
+                                }
+
+                            }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            }
+
+
         </div>
 
     </div>
 
     <div class="card shadow-sm mt-3">
 
-        <div class="card-header">
-            Today's Production
-        </div>
-
         <div class="card-body p-0">
 
-            <table class="table mb-0">
+            <div class="table-responsive production-scroll">
 
-                <thead>
+                <table class="table table-bordered mb-0 production-table">
 
-                    <tr>
-                        <th>ID</th>
-                        <th>Date</th>
-                        <th>Product</th>
-                        <th>Qty</th>
-                        <th>Packets</th>
-                        <th>Edit</th>
-                    </tr>
+                    <thead>
 
-                </thead>
+                        <tr>
 
-                <tbody>
+                            <th rowspan="2" class="text-center">
 
-                    @for(row of productions; track row.id; let i = $index){
+                                Date
 
-                    <tr>
+                            </th>
 
-                        <td>{{i}}</td>
+                            <th rowspan="2" class="text-center">
 
-                        <td>{{row.production_date | date:'dd/MM/yyyy' }}</td>
+                            </th>
 
-                        <td>{{row.product_name}}</td>
+                            @for(product of tableProducts; track product.id){
 
-                        <td>{{ row.quantity | number:'1.3-3' }}</td>
+                            <th class="text-center">
 
-                        <td>{{row.produced_packets}}</td>
+                                {{ product.name }}
 
-                        <td>
-                            <Button class="btn edit-prod-entry" (click)="edit(row)">
-                                <i class="bi bi-pencil-fill"></i>
-                            </Button>
-                        </td>
+                            </th>
 
+                            }
 
-                    </tr>
+                            <th rowspan="2">Action</th>
 
-                    }
+                        </tr>
 
-                </tbody>
+                    </thead>
 
-            </table>
+                    <tbody>
+
+                        @for(day of pivotData; track day.date){
+
+                        <tr>
+
+                            <td rowspan="2">
+
+                                {{ day.date | date:'dd/MM/yy' }}
+
+                            </td>
+
+                            <td>
+
+                                Qty
+
+                            </td>
+
+                            @for(product of tableProducts; track product.id){
+
+                            <td class="text-center">
+
+                                {{ day.rows[product.id]?.quantity ?? '' }}
+
+                            </td>
+
+                            }
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+
+                                Pkts
+
+                            </td>
+
+                            @for(product of tableProducts; track product.id){
+
+                            <td class="text-center">
+
+                                {{ day.rows[product.id]?.packets ?? '' }}
+
+                            </td>
+
+                            }
+
+                            <td rowspan="2">
+
+                                <button class="btn btn-sm btn-secondary" (click)="editProduction(day)">
+
+                                    <i class="bi bi-pencil-fill"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
