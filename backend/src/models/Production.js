@@ -93,6 +93,81 @@ exports.create = async (productionData) => {
   }
 };
 
+// ================= CREATE BULK =================
+exports.createBulk = async (data, userId) => {
+  const conn = await pool.getConnection();
+
+  try {
+    await conn.beginTransaction();
+
+    for (const item of data.items) {
+
+      // Skip empty rows
+      if (
+        !item.produced_packets ||
+        Number(item.produced_packets) <= 0
+      ) {
+        continue;
+      }
+
+      // -------------------------
+      // Save production entry
+      // -------------------------
+      await conn.query(
+        `
+        INSERT INTO Fc_production_entries
+        (
+          production_date,
+          product_id,
+          quantity,
+          produced_packets,
+          remarks,
+          created_by,
+          updated_by
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?)
+        `,
+        [
+          data.production_date,
+          item.product_id,
+          item.quantity,
+          item.produced_packets,
+          data.remarks || null,
+          userId,
+          userId,
+        ]
+      );
+
+      // -------------------------
+      // Increase finished stock
+      // -------------------------
+      await Stock.increaseStock(
+        conn,
+        item.product_id,
+        item.produced_packets
+      );
+    }
+
+    await conn.commit();
+
+    return {
+      success: true,
+      message: "Production saved successfully"
+    };
+
+  } catch (err) {
+
+    await conn.rollback();
+    throw err;
+
+  } finally {
+
+    conn.release();
+
+  }
+};
+
 // ================= UPDATE =================
 exports.update = async (id, productionData) => {
   const conn = await pool.getConnection();

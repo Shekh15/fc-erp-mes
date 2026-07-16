@@ -39,6 +39,23 @@ exports.create = async (req, res) => {
   }
 };
 
+exports.createBulk = async (req, res, next) => {
+  try {
+
+    const userId = 1; // TODO replace with req.user.id
+
+    const result = await Production.createBulk(
+      req.body,
+      userId
+    );
+
+    res.status(201).json(result);
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // ================= UPDATE =================
 exports.update = async (req, res) => {
   try {

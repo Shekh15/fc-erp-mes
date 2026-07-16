@@ -7,9 +7,10 @@ const billRoutes = require("./routes/billRoutes");
 const ledgerRoutes = require("./routes/ledgerRoutes");
 const priceListRoutes = require("./routes/priceListRoutes");
 const errorHandler = require("./middleware/errorHandler");
-const paymentRoutes = require('./routes/paymentRoutes');
+const paymentRoutes = require("./routes/paymentRoutes");
 const productionRoutes = require("./routes/productionRoutes");
-
+const productionDashboardRoutes = require("./routes/productionDashboardRoutes");
+const unitRoutes = require("./routes/unitRoutes");
 
 // Middleware
 // app.use(cors(
@@ -24,24 +25,24 @@ const productionRoutes = require("./routes/productionRoutes");
 //     ], Allowed origins
 
 //     methods: "GET,POST,PUT,DELETE",  Allowed HTTP methods
-//     allowedHeaders: "Content-Type,Authorization" Allowed headers 
+//     allowedHeaders: "Content-Type,Authorization" Allowed headers
 //   }
 // ));
 
-app.use(cors(
-  {
+app.use(
+  cors({
     origin: "*",
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],  //Allowed HTTP methods
-    allowedHeaders: "Content-Type,Authorization" //Allowed headers 
-  }
-));
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], //Allowed HTTP methods
+    allowedHeaders: "Content-Type,Authorization", //Allowed headers
+  }),
+);
 app.use(express.json());
 
 // ✅ Root health check
 app.get("/", (req, res) => {
   res.json({
     status: "OK",
-    message: "FC ERP Backend is running 🚀"
+    message: "FC ERP Backend is running 🚀",
   });
 });
 
@@ -51,8 +52,10 @@ app.use("/api/clients", clientRoutes);
 app.use("/api/bills", billRoutes);
 app.use("/api/ledger", ledgerRoutes);
 app.use("/api/price-lists", priceListRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/production', productionRoutes)
+app.use("/api/payments", paymentRoutes);
+app.use("/api/production", productionRoutes);
+app.use("/api/production-dashboard", productionDashboardRoutes);
+app.use("/api/units", unitRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
@@ -66,4 +69,3 @@ app.use(errorHandler);
 // });
 
 module.exports = app;
-
